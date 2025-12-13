@@ -4,9 +4,7 @@ metaLinks: {}
 
 # 入门指南
 
-<div data-full-width="false"><figure><img src=".gitbook/assets/chloros_logo_transparent.png" alt=""><figcaption></figcaption></figure></div>
-
-Chloros是由[MAPIR](https://www.mapir.camera)开发的软件应用程序，用于处理图像及其他传感器数据。
+<div data-full-width="false"><figure><img src=".gitbook/assets/chloros_logo_transparent.png" alt=""><figcaption></figcaption></figure></div>Chloros是由[MAPIR](https://www.mapir.camera)开发的软件应用程序，用于处理图像及其他传感器数据。
 
 ***
 
@@ -20,7 +18,7 @@ Chloros提供4种应用模式：
 
 ## [Chloros CLI：命令行界面](CLI.md)
 
-命令行批处理模式。适用于自动化、脚本编写及高级工作流。_使用CLI需持有Chloros+许可证._
+支持命令行批量处理。适用于自动化、脚本编写及高级工作流。_使用CLI需持有Chloros+许可证。_
 
 ## [Chloros API: Python SDK](api-python-sdk.md)
 
@@ -32,7 +30,7 @@ Chloros提供4种应用模式：
 
 虽然Chloros可免费完成多数任务，但您可能需要更多功能。此时购买Chloros+付费许可证将为您带来显著优势。 通过 Chloros+ 许可证，您可解锁以下新功能：
 
-* **多线程处理**：通过管道并行处理图像，大幅提升大型项目的图像处理速度。
+* **多线程处理**：通过管道同时处理图像，大幅提升大型项目的图像处理速度。
 * **GPU（CUDA）加速**：利用当今更高规格的GPU内存配置，进一步提升图像处理管道速度。建议配备4GB及以上显存以获得最佳效果。
 * **Chloros+** [**CLI**](CLI.md) **访问**：通过命令行运行Chloros+，实现自动化并集成至自有软件。
 * **Chloros+** [**API**](api-python-sdk.md) **访问方式：**通过Python调用Chloros+实现程序化控制，可无缝集成至研究流程、数据分析工作流及定制应用程序。

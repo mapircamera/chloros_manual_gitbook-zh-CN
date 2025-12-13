@@ -4,7 +4,7 @@
 * [图形界面：导航](navigation.md)
 * [图形界面：项目管理](projects.md)
 * [CLI：命令行](CLI.md)
-* [API：Python SDK](api-python-sdk.md)
+* [API：Python SDK](api-python-sdk.md)(api-python-sdk.md)
 * [支持相机](supported-cameras.md)
 * [输出图像格式](output-image-formats.md)
 * [Chloros+ 登录](chloros+-login.md)
