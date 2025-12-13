@@ -1,247 +1,247 @@
-# Opening an Image Full Screen
+# 全屏打开图像
 
-The Chloros Image Viewer provides a dedicated full-screen interface for viewing, analyzing, and manipulating your multispectral images. Whether viewing original images or processed outputs, the Image Viewer offers powerful tools for inspection and analysis.
+Chloros 图像查看器提供专用的全屏界面，用于查看、分析和处理多光谱图像。无论是查看原始图像还是处理后的输出结果，图像查看器都提供强大的检查与分析工具。
 
-## Accessing the Image Viewer
+## 访问图像查看器
 
-### From the File Browser
+### 通过文件浏览器
 
-The most common way to open an image in the Image Viewer:
+在图像查看器中打开图像的最常用方式：
 
-1. Ensure you're in the **File Browser** tab <img src="../.gitbook/assets/icon_file-browser.JPG" alt="" data-size="line">
-2. Click any **image thumbnail** in the image grid
-3. The image opens in the **main preview area** (center of screen)
-4. The image is now loaded and ready for full-screen viewing
+1. 确保处于**文件浏览器**标签页 <img src="../.gitbook/assets/icon_file-browser.JPG" alt="" data-size="line">
+2. 点击图像网格中的任意**图像缩略图**
+3. 图像将在**主预览区域**（屏幕中央）打开
+4. 图像加载完成，可进入全屏查看模式
 
-### Opening the Image Viewer Tab
+### 打开图像查看器标签页
 
-Once an image is loaded in the preview area:
+当图像加载至预览区域后：
 
-1. Click the **Image Viewer** <img src="../.gitbook/assets/icon_image-viewer.JPG" alt="" data-size="line"> icon in the left sidebar
-2. The Image Viewer tab opens, displaying the selected image full-screen
-3. Advanced viewing and analysis tools become available in the left sidebar
-
-***
-
-## Image Viewer Interface Overview
-
-### Main Display Area
-
-The largest portion of the screen shows your image:
-
-* **Full resolution**: Images displayed at native resolution
-* **Zoomable**: Use controls or mouse wheel to zoom
-* **Pannable**: Click and drag to move around when zoomed
-* **Aspect ratio maintained**: Images scale proportionally
+1. 点击左侧边栏的**图像查看器** <img src="../.gitbook/assets/icon_image-viewer.JPG" alt="" data-size="line"> 图标
+2. 图像查看器标签页开启，选定图像以全屏显示
+3. 高级查看与分析工具将在左侧边栏启用
 
 ***
 
-## Viewing Options
+## 图像查看器界面概览
 
-### Basic Image Navigation
+### 主显示区域
 
-#### Browse Through Images
+屏幕最大区域用于展示图像：
 
-Navigate through your image set using keyboard shortcuts or buttons:
-
-* **Next image**: Click → button or press **→** (Right Arrow) key
-* **Previous image**: Click ← button or press **←** (Left Arrow) key
-* **Jump to specific image**: Return to File Browser and click desired thumbnail
-
-#### Zoom Controls
-
-Adjust magnification to inspect image details:
-
-**Zoom In:**
-
-* Click **+** (Plus) button
-* Press **+** or **=** key
-* Scroll mouse wheel **up**
-
-**Zoom Out:**
-
-* Click **−** (Minus) button
-* Press **−** (Minus) key
-* Scroll mouse wheel **down**
-
-**Fit to Screen:**
-
-* Click **↔** (Fit) button
-* Press **0** (Zero) key
-* Double-click on image
-
-#### Pan When Zoomed
-
-When zoomed in beyond screen size:
-
-1. Move mouse cursor over image
-2. Click and **hold left mouse button**
-3. **Drag** to move image around
-4. Release to stop panning
-
-**Alternative**: Use arrow keys to pan in small increments
+* **全分辨率**：以原始分辨率显示图像
+* **可缩放**：使用控制条或鼠标滚轮调整缩放
+* **可平移**：缩放状态下点击并拖动可移动视图
+* **保持宽高比**：图像按比例缩放
 
 ***
 
-## Pixel Value Inspection
+## 浏览选项
 
-### Viewing Pixel Values at Cursor
+### 基础图像导航
 
-As you move your mouse cursor over the image, pixel values display in real-time:
+#### 浏览图像
 
-**Value display location:**
+通过快捷键或按钮浏览图像集：
 
-* **Floating number and red line in right side index LUT gradient legend**
-* **When zoomed in further, floating value near cursor and highlighted pixel**
-* Shows values for pixel **under cursor or highlighted**
-* Updates as you move mouse
+* **下一张图像**：点击→按钮或按**→**（右箭头）键
+* **上一张图像**：点击←按钮或按**←**（左箭头）键
+* **跳转至特定图像**：返回文件浏览器并点击目标缩略图
 
-***
+#### 缩放控制
 
-## Image Types You Can View
+调整放大倍率以查看图像细节：
 
-### Original Images (Pre-Processing)
+**放大：**
 
-**RAW + JPG images from camera:**
+* 点击 **+**（加号）按钮
+* 按下 **+** 或 **=** 键
+* 滚动鼠标滚轮 **向上**
 
-* Display RAW data as previewed
-* Show original, uncorrected values
-* Useful for checking image quality before processing
+**缩小：**
 
-### Calibrated Reflectance Images
+* 点击 **−**（减号）按钮
+* 按下 **−**（减号）键
+* 滚动鼠标滚轮 **向下**
 
-**After processing:**
+**屏幕适配：**
 
-* Vignette corrected
-* Reflectance calibrated
-* Multi-band TIFF (Red, Green, NIR, etc.)
-* Scientific data ready for analysis
+* 点击**↔**（适配）按钮
+* 按**0**（零）键
+* 双击图像
 
-### Index Images
+#### 缩放状态下的平移
 
-**NDVI, NDRE, GNDVI, etc. (\_NDVI.tif files):**
+当放大超出屏幕尺寸时：
 
-* Single-band grayscale images
-* Pixel values represent index calculation results
-* Range typically -1 to +1 for normalized indices
-* Can apply color LUTs for visualization
+1. 将鼠标光标移至图像上
+2. 点击并**按住鼠标左键**
+3. **拖动**调整图像位置
+4. 松开鼠标停止平移
 
-***
-
-## Index and LUT Application
-
-Apply multispectral indices and color Look-Up Tables:
-
-1. Locate **Index/LUT Sandbox** in **Image Viewer** <img src="../.gitbook/assets/icon_image-viewer.JPG" alt="" data-size="line"> sidebar
-2. Select vegetation index (NDVI, NDRE, etc.)
-3. Select multispectral formula, or create your own custom one (Chloros+ only)
-4. Apply color LUT gradient for visualization
-5. Adjust value ranges and thresholds
-
-See [Index/LUT Sandbox](index-lut-sandbox.md) for detailed instructions.
+**替代方案**：使用方向键进行微调平移
 
 ***
 
-## Keyboard Shortcuts
+## 像素值检测
 
-### Navigation
+### 实时查看光标位置像素值
 
-* **→** (Right Arrow): Next image
-* **←** (Left Arrow): Previous image
-* **Home**: First image in list
-* **End**: Last image in list
+当鼠标光标移动至图像区域时，像素值将实时显示：
 
-### Zoom
+**数值显示位置：**
 
-* **+** or **=**: Zoom in
-* **−**: Zoom out
-* **0** (Zero): Fit to screen
-* **Mouse Wheel**: Zoom in/out
-
-### View Controls
-
-* **P**: Toggle pixel percent mode
-* **L**: Toggle layers panel
-* **Esc**: Close full-screen or return to File Browser
-
-### Other
-
-* **Ctrl+S**: Save current image
-* **F**: Full-screen mode (if available)
+* **右侧索引LUT渐变图例中的浮动数值与红色线条**
+* **进一步放大时，光标附近显示浮动值及高亮像素**
+* 显示**光标下方或高亮区域**的像素值
+* 随鼠标移动实时更新
 
 ***
 
-### Verifying Index Calculations
+## 可查看的图像类型
 
-Check that indices calculated correctly:
+### 原始图像（预处理前）
 
-1. Open NDVI or other index image
-2. Check vegetation areas:
-   * **NDVI**: Should show 0.4-0.9 for healthy plants
-   * **NDRE**: Higher values for vigorous growth
-   * **GNDVI**: Similar to NDVI but chlorophyll-sensitive
-3. Check non-vegetation:
-   * **Soil**: Near 0 or slightly negative
-   * **Water**: Negative values (-0.5 to 0)
+**相机原始RAW+JPG图像：**
 
-***
+* 以预览形式显示RAW数据
+* 呈现未经校正的原始数值
+* 适用于处理前检查图像质量
 
-## Troubleshooting Viewing Issues
+### 校准反射率图像
 
-### Image Won't Open
+**处理后：**
 
-**Possible causes:**
+* 暗角校正
+* 反射率标定
+* 多波段TIFF（Red, Green, NIR等）
+* 科学数据已准备就绪可供分析
 
-* File corrupted during processing
-* Unsupported file format
-* Insufficient memory for large image
+### 指数图像
 
-**Solutions:**
+**NDVI、NDRE、GNDVI等（\_NDVI.tif文件）：**
 
-1. Try opening in external viewer to verify file integrity
-2. Check file format matches expected type
-3. Close other applications to free memory
-4. Try smaller/different image
-
-### Black or White Image Display
-
-**Possible causes:**
-
-* Value range outside display capability
-* 32-bit float image with unusual values
-* Index calculation error
-
-**Solutions:**
-
-1. Check pixel values - if all very low or very high, adjust display range
-2. Try opening in QGIS or similar with auto-range adjustment
-3. Check Debug Log from processing for errors
-
-### Pixel Values Seem Wrong
-
-**Possible causes:**
-
-* Viewing wrong image (original vs processed)
-* Calibration didn't apply correctly
-* Light sensor data wasn't included in input
-* Percent mode toggled incorrectly
-
-**Solutions:**
-
-1. Verify you're viewing processed output (check filename suffix)
-2. Check percent mode button state
-3. Compare with known-good images from same dataset
+* 单波段灰度图像
+* 像素值代表指数计算结果
+* 归一化指数范围通常为-1至+1
+* 可应用颜色查找表（LUT）进行可视化
 
 ***
 
-## Next Steps
+## 指数与LUT应用
 
-Now that you can view images full-screen:
+应用多光谱指数与颜色查找表：
 
-* [**Image Layers**](image-layers.md) - Learn about multi-band visualization
-* [**Index/LUT Sandbox**](index-lut-sandbox.md) - Apply custom indices and color mapping
-* [**Multispectral Index Formulas**](../project-settings/multispectral-index-formulas.md) - Understand available indices
+1. 在**图像查看器**侧边栏定位**指数/LUT沙盒** <img src="../.gitbook/assets/icon_image-viewer.JPG" alt="" data-size="line"> 侧边栏
+2. 选择植被指数（NDVI、NDRE等）
+3. 选择多光谱计算公式，或创建自定义公式（仅限Chloros+版本）
+4. 应用色彩LUT渐变实现可视化
+5. 调整数值范围与阈值
 
-For processing workflow, see:
+详见[指数/LUT沙盒](index-lut-sandbox.md)操作指南。
 
-* [**Processing Images (GUI)**](../processing-images-gui/adding-files-to-a-project.md) - Complete processing guide
+***
+
+## 键盘快捷键
+
+### 导航
+
+* **→**（右箭头）：下一张图像
+* **←**（左箭头）：上一张图像
+* **Home**：列表首张图像
+* **End**：列表末张图像
+
+### 缩放
+
+* **+** 或 **=**：放大
+* **−**：缩小
+* **0**（零键）：全屏显示
+* **鼠标滚轮**：缩放
+
+### 视图控制
+
+* **P**：切换像素百分比模式
+* **L**：切换图层面板
+* **Esc**：关闭全屏或返回文件浏览器
+
+### 其他
+
+* **Ctrl+S**：保存当前图像
+* **F**：全屏模式 （如可用）
+
+***
+
+### 指数计算验证
+
+检查指数计算是否正确：
+
+1. 打开NDVI或其他指数图像
+2. 检查植被区域：
+   * **NDVI**：健康植被应显示0.4-0.9
+   * **NDRE**：生长旺盛区域数值较高
+   * **GNDVI**：与NDVI类似，但为叶绿素敏感型
+3. 检查非植被区域：
+   * **土壤**：接近0或略微负值
+   * **水体**：负值范围（-0.5至0）
+
+***
+
+## 显示问题排查指南
+
+### 图片无法打开
+
+**可能原因：**
+
+* 处理过程中文件损坏
+* 文件格式不受支持
+* 大尺寸图像内存不足
+
+**解决方案：**
+
+1. 尝试用外部查看器打开以验证文件完整性
+2. 检查文件格式是否与预期类型匹配
+3. 关闭其他应用程序释放内存
+4. 尝试打开较小/不同图像
+
+### 显示为纯黑/纯白图像
+
+**可能原因：**
+
+* 数值范围超出显示器能力
+* 32位浮点图像存在异常数值
+* 索引计算错误
+
+**解决方案：**
+
+1. 检查像素值——若全部偏低或偏高，调整显示范围
+2. 尝试在QGIS等支持自动范围调整的软件中打开
+3. 查看处理过程的调试日志查找错误
+
+### 像素值异常
+
+**可能原因：**
+
+* 误读原始图像（原始版与处理版混淆）
+* 校准未正确应用
+* 输入数据未包含光传感器信息
+* 百分比模式切换错误
+
+**解决方案：**
+
+1. 确认查看的是处理后输出（检查文件名后缀）
+2. 检查百分比模式按钮状态
+3. 与同数据集已知正确图像对比
+
+***
+
+## 后续操作
+
+现已支持全屏图像查看：
+
+* [**图像图层**](image-layers.md) - 了解多波段可视化技术
+* [**指数/LUT沙盒**](index-lut-sandbox.md) - 应用自定义指数与色彩映射
+* [**多光谱指数公式**](../project-settings/multispectral-index-formulas.md) - 了解可用指数
+
+处理工作流请参阅：
+
+* [**图像处理（GUI）**](../processing-images-gui/adding-files-to-a-project.md) - 完整处理指南

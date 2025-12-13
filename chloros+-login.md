@@ -6,7 +6,9 @@
 
 登录后将显示您的账户详情：
 
-<figure><img src=".gitbook/assets/user_account.JPG" alt="" width="375"><figcaption></figcaption></figure>## CLI 登录
+<figure><img src=".gitbook/assets/user_account.JPG" alt="" width="375"><figcaption></figcaption></figure>
+
+## CLI 登录
 
 使用您的 Chloros+ 凭证登录以启用 CLI 处理功能。
 
@@ -28,7 +30,9 @@ chloros-cli login user@example.com 'MyP@ssw0rd123'
 
 **输出：**
 
-<figure><img src=".gitbook/assets/cli login_w.JPG" alt=""><figcaption></figcaption></figure>### 方案到期
+<figure><img src=".gitbook/assets/cli login_w.JPG" alt=""><figcaption></figcaption></figure>
+
+### 方案到期
 
 图形界面显示的方案到期时间即为许可证失效时间。月度订阅方案到期于当月末，年度订阅方案到期于订阅开始后一年。许可证验证需每月连接互联网进行核验，并享有30天宽限期。
 

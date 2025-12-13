@@ -9,7 +9,9 @@ metaLinks:
 
 MAPIR提供多种校准靶标以满足不同应用需求。下图所示的紧凑型T4-R50包含4块面板，其光反射率已在250-2500纳米波长范围内完成测量。
 
-<figure><img src=".gitbook/assets/t4-r50_2.jpg" alt=""><figcaption><p>MAPIR T4-R50</p></figcaption></figure>T4漫反射参考靶标具有以下反射率曲线，[数据下载链接](https://cdn.shopify.com/s/files/1/0972/5566/files/MAPIR_Diffuse_Reflectance_Standard_Calibration_Target_Data_T4.xlsx?v=1741759157)：
+<figure><img src=".gitbook/assets/t4-r50_2.jpg" alt=""><figcaption><p>MAPIR T4-R50</p></figcaption></figure>
+
+T4漫反射参考靶标具有以下反射率曲线，[数据下载链接](https://cdn.shopify.com/s/files/1/0972/5566/files/MAPIR_Diffuse_Reflectance_Standard_Calibration_Target_Data_T4.xlsx?v=1741759157)：
 
 <figure><img src=".gitbook/assets/MAPIR Diffuse Reflectance Standard Calibration Target Data T4 (250-2500nm).png" alt=""><figcaption><p>MAPIR T4 反射率 :: 250-2500nm</p></figcaption></figure>
 

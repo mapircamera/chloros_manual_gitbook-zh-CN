@@ -4,7 +4,9 @@ metaLinks: {}
 
 # 入门指南
 
-<div data-full-width="false"><figure><img src=".gitbook/assets/chloros_logo_transparent.png" alt=""><figcaption></figcaption></figure></div>Chloros是由[MAPIR](https://www.mapir.camera)开发的软件应用程序，用于处理图像及其他传感器数据。
+<div data-full-width="false"><figure><img src=".gitbook/assets/chloros_logo_transparent.png" alt=""><figcaption></figcaption></figure></div>
+
+Chloros是由[MAPIR](https://www.mapir.camera)开发的软件应用程序，用于处理图像及其他传感器数据。
 
 ***
 
