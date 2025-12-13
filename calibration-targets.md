@@ -1,5 +1,5 @@
 ---
-description: Lab-measured panels used to calibrate captured data in post-processing
+description: 用于在后期处理中校准采集数据的实验室测量面板
 metaLinks:
   alternates:
     - https://app.gitbook.com/s/o044KN3Ws0uIDvOmSkcR/calibration-targets
