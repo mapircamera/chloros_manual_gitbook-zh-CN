@@ -3,12 +3,11 @@ metaLinks:
   alternates:
     - https://app.gitbook.com/s/o044KN3Ws0uIDvOmSkcR/output-image-formats
 ---
-
 # 输出图像格式
 
 ### TIFF (16位)
 
-16位（像素数字值 0 - 65535）TIFF (.tif) 格式输出。
+16位（像素数字值0-65535）TIFF (.tif) 格式输出。
 
 ### TIFF（32位，百分比%）
 
@@ -16,7 +15,7 @@ metaLinks:
 
 ### **JPG（8位）**
 
-8位（像素数字数0-255）JPG（.jpg）格式输出。
+8位（像素数字值0-255）JPG（.jpg）格式输出。
 
 ### **PNG (8位)**
 

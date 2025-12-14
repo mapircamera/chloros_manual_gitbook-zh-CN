@@ -12,11 +12,11 @@
 
 ### <img src=".gitbook/assets/image (2).png" alt="" data-size="line"> 播放/启动按钮
 
-启用后，此按钮将启动图像处理流水线。
+启用后，该按钮将启动图像处理流水线。
 
-### <img src=".gitbook/assets/image (4).png" alt="" data-size="line"> 进度条 <img src=".gitbook/assets/image (5).png" alt="" data-size="line">在免费Chloros模式（顺序处理所有文件）下，进度条显示两个阶段：目标检测与处理。
+### <img src=".gitbook/assets/image (4).png" alt="" data-size="line"> 进度条 <img src=".gitbook/assets/image (5).png" alt="" data-size="line">在免费Chloros模式下（顺序处理所有文件），进度条显示两个阶段：目标检测与处理。
 
-在付费Chloros+授权模式（并行处理所有文件）下，进度条显示四个阶段：检测、分析、校准、导出。 将鼠标悬停在进度条上将展开扩展面板以便实时跟踪进度。点击顶部进度条可冻结下拉面板，再次点击则解除冻结。
+在付费Chloros+授权模式下（并行处理所有文件），进度条显示四个阶段：检测、分析、校准、导出。 将鼠标悬停在进度条上将展开扩展面板以便实时跟踪进度。点击顶部进度条可冻结下拉面板，再次点击则解除冻结。
 
 <figure><img src=".gitbook/assets/plus_prog.JPG" alt=""><figcaption></figcaption></figure>
 
@@ -26,7 +26,7 @@
 
 #### <img src=".gitbook/assets/icon_project-settings.JPG" alt="" data-size="line"> [项目设置](project-settings/project-settings.md)
 
-项目设置选项卡可调整项目全局参数及处理设置。请在开始文件处理前完成配置。
+项目设置选项卡可调整项目全局参数及处理参数。请在开始处理文件前完成这些设置。
 
 #### <img src=".gitbook/assets/icon_file-browser.JPG" alt="" data-size="line"> 文件浏览器
 

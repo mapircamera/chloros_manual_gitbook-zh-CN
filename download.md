@@ -1,6 +1,11 @@
+---
+metaLinks:
+  alternates:
+    - https://app.gitbook.com/s/o044KN3Ws0uIDvOmSkcR/download
+---
 # 下载
 
-下载最新版本的Chloros，用于Windows，开始进行多光谱图像处理。
+下载最新版本的Chloros（适用于Windows），开始进行多光谱图像处理。
 
 ### 系统要求
 
@@ -8,8 +13,8 @@
 | -------------------- | ------------------------------- | ------------------------------- |
 | **操作系统** | Windows 10 (64位)             | Windows 11 (64位)             |
 | **处理器**        | 英特尔酷睿i5或同等性能     | 英特尔酷睿i7或更高性能         |
-| **内存 (RAM)**     | 8GB                             | 16GB 或更高                    |
-| **显卡**    | DirectX 11 兼容           | NVIDIA GPU 配备 4GB+ 显存       |
+| **内存（RAM）**     | 8GB                             | 16GB 或更高                    |
+| **显卡**    | 兼容 DirectX 11           | NVIDIA GPU 配备 4GB+ 显存       |
 | **存储空间**          | 2GB 可用空间                  | SSD 配备 10GB+ 可用空间       |
 | **显示器**          | 1920x1080                       | 2560x1440 或更高分辨率             |
 | **网络连接**         | 许可证激活必需 | 许可证激活必需 |
@@ -24,7 +29,7 @@
 
 ### <a href="https://drive.google.com/file/d/1HjwrUY4M7HGxDbMybO7iPe_6JoHnUGr4/view?usp=drive_link" class="button primary">在此下载 Chloros</a>
 
-### 最新稳定版本
+### 最新稳定版
 
 **Chloros 安装程序适用于 Windows**
 
@@ -40,9 +45,9 @@
 3. 跟随安装向导提示操作
 4. 选择安装目录（默认：`C:\Program Files\Chloros\`）
 5. 完成安装并启动 Chloros
-6. 使用您的MAPIR云端Chloros+账户登录（或继续使用免费版）
+6. 使用您的 MAPIR 云端 Chloros+ 账户登录（或继续使用免费版）
 
-{%提示 style=&quot;success&quot; %}
+{% 提示 style=&quot;success&quot; %}
 安装程序会自动将`chloros-cli`添加至系统PATH环境变量，以便命令行访问。
 {% endhint %}
 
@@ -68,23 +73,23 @@ pip install chloros-sdk
 
 Chloros安装包包含：
 
-* ✅ **Chloros桌面版GUI** - 全功能图形界面
-* ✅ **Chloros（浏览器版）** - 适用于低配置系统的网页界面
+* ✅ **Chloros 桌面版图形界面** - 功能完整的图形化界面
+* ✅ **Chloros (浏览器版)** - 面向低配置系统的网页界面
 * ✅ **Chloros CLI** - 命令行界面（需Chloros+许可证）
 * ✅ **后端引擎** - 图像处理流水线
 * ✅ **相机配置文件** - 预配置相机模板
 
 ***
 
-## 升级至XPROTX+
+## 升级至Chloros+
 
-订阅XPROTX+解锁高级功能：
+订阅Chloros+解锁高级功能：
 
 * 🚀 **多线程处理** - 并行处理图像
-* ⚡ **GPU（CUDA）加速** - 释放NVIDIA显卡性能
+* ⚡ **GPU（CUDA）加速** - 释放NVIDIA GPU性能
 * 💻 **CLI访问** - 通过命令行工具实现自动化
 * 🐍 **Python SDK** - 程序化API访问
-* 📱 **多设备支持** - 适用于2-10+台设备（取决于套餐）
+* 📱 **多设备支持** - 可在2-10+台设备上使用（取决于套餐）
 * 🧮 **自定义公式** - 创建专属多光谱指数
 
 <p align="center"><a href="https://cloud.mapir.camera/pricing" class="button primary">查看 Chloros+ 方案与定价</a></p>***
@@ -112,7 +117,7 @@ Chloros安装包包含：
 * 确保网络连接正常
 * 在[https://cloud.mapir.camera](https://cloud.mapir.camera)验证凭证
 * 检查防火墙是否阻断Chloros
-* 详见[Chloros+ 登录](chloros+-login.md)操作指南
+* 详见[Chloros+登录](chloros+-login.md)操作指南
 
 ### 获取支持
 
@@ -121,7 +126,7 @@ Chloros安装包包含：
 * 📧 **邮件**：info@mapir.camera
 * 🌐 **官网**：[https://www.mapir.camera/community/contact](https://www.mapir.camera/community/contact)
 * 📚 **文档**：[入门指南](./)
-* ❓ **常见问题**：[FAQ解答](faq.md)
+* ❓ **常见问题**：[常见问题解答](faq.md)
 
 ***
 
@@ -135,19 +140,19 @@ Chloros安装包包含：
 
 #### 新增功能
 
-* 初始发布
+* 初始版本发布
 
-#### 改进
+#### 改进项
 
-* 初始发布
+* 初始版本发布
 
 #### 错误修复
 
-* 初始发布
+* 初始版本发布
 
 #### 已知问题
 
-* 初始发布
+* 初始版本发布
 
 </details>***
 
@@ -157,6 +162,8 @@ Chloros安装包包含：
 
 禁止未经授权的使用、分发或修改。
 
-**免费版**：可用于个人及商业用途，功能受限
+**免费版**：可用于个人及商业用途，功能有限制
 
-**Chloros+**：订阅制许可，支持高级功能及商业部署
+**Chloros+**：订阅制许可，提供高级功能及商业部署支持
+
+<figure><img src=".gitbook/assets/t3-125_2.jpg" alt=""><figcaption></figcaption></figure>
