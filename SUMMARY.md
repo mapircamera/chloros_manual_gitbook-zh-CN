@@ -29,6 +29,8 @@
 
 ## 图像查看器（图形界面）
 
+* [图像网格](image-viewer-gui/image-grid.md)
 * [全屏打开图像](image-viewer-gui/opening-an-image-full-screen.md)
 * [图像图层](image-viewer-gui/image-layers.md)
 * [指数/LUT沙盒](image-viewer-gui/index-lut-sandbox.md)
+* [地图标记](image-viewer-gui/map-markers.md)
