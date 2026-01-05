@@ -86,7 +86,7 @@
 
 可选择地图图层类型（从左至右）：
 
- <img src="../.gitbook/assets/image (23).png" alt="" data-size="original">### 地形图
+ <img src="../.gitbook/assets/image (23).png" alt="" data-size="line">### 地形图
 
 显示高程剖面及包含细节（道路等）的地图瓦片
 

@@ -6,7 +6,7 @@
 
 登录后将显示您的账户详情：
 
-<figure><img src=".gitbook/assets/user_account.JPG" alt="" width="375"><figcaption></figcaption></figure>## CLI登录
+<figure><img src=".gitbook/assets/user_account.JPG" alt="" data-size="line"><figcaption></figcaption></figure>## CLI登录
 
 使用您的Chloros+凭证登录以启用CLI处理功能。
 
