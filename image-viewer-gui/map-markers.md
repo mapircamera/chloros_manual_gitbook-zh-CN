@@ -1,21 +1,25 @@
 # 地图标记
 
-地图选项卡会根据图像的GPS坐标，在交互式二维地图上显示您的图像。这为您提供拍摄会话的地理概览，并帮助您可视化空间覆盖范围。在首次导入图像时，此功能还可快速移除无需处理的图像。
+地图选项卡会根据图像的GPS坐标，在交互式二维地图上显示您的图像。这可为您提供拍摄会话的地理概览，并帮助您可视化空间覆盖范围。在首次导入图像时，此功能还可快速移除无需处理的图像。
 
-## 访问地图选项卡
+<figure><img src="../.gitbook/assets/chloros_map_markers.gif" alt=""><figcaption></figcaption></figure>
+
+## 访问地图标签页
 
 1. 在Chloros中打开或创建项目
-2. 导入包含GPS元数据的图像
-3. 点击左侧边栏的**地图** <img src="../.gitbook/assets/image (3).png" alt="" data-size="line"> 标签
-4. 地图将显示每张图像GPS位置的标记
+2. 导入含GPS元数据的图像
+3. 点击左侧边栏的**地图** <img src="../.gitbook/assets/image (3).png" alt="" data-size="line"> 标签页
+4. 地图将显示每张图像GPS位置的标记点
 
-{% 提示 style=&quot;info&quot; %}
-**需GPS支持**：仅EXIF元数据中嵌有GPS坐标的图像会显示在地图上。拍摄时请确保相机GPS功能已开启。
+{% hint style="info" %}
+**GPS必备条件**：仅EXIF元数据中嵌有GPS坐标的图像会显示在地图上。拍摄时请确保相机GPS功能处于开启状态。
 {% endhint %}
 
 ***
 
-## 通过地图标签调整图像**地图**<img src="../.gitbook/assets/image (3).png" alt="" data-size="line"> 标签页具备相同的添加  <img src="../.gitbook/assets/image.png" alt="" data-size="line">   <img src="../.gitbook/assets/image (1).png" alt="" data-size="line">  和删除  <img src="../.gitbook/assets/image (2).png" alt="" data-size="line">  文件按钮与[**文件浏览器**](../processing-images-gui/adding-files-to-a-project.md) <img src="../.gitbook/assets/icon_file-browser.JPG" alt="" data-size="line"> 标签页相同。同时显示相同的项目文件表格列表，但列标题有所不同：
+## 通过地图标签调整图像
+
+**地图** <img src="../.gitbook/assets/image (3).png" alt="" data-size="line"> 标签页具备与  <img src="../.gitbook/assets/image.png" alt="" data-size="line">   <img src="../.gitbook/assets/image (1).png" alt="" data-size="line">  和删除  <img src="../.gitbook/assets/image (2).png" alt="" data-size="line">  文件按钮与[**文件浏览器**](../processing-images-gui/adding-files-to-a-project.md) <img src="../.gitbook/assets/icon_file-browser.JPG" alt="" data-size="line"> 标签页相同。同时显示相同的项目文件表格列表，但列标题有所不同：
 
 ### 文件名
 
@@ -34,7 +38,7 @@
 
 * 图像拍摄海拔高度
 
-{% 提示 style=&quot;info&quot; %}
+{% hint style="info" %}
 点击表格列标题可对行数据进行排序
 {% endhint %}
 
@@ -42,29 +46,29 @@
 
 ## 图像标记
 
-每张带有GPS数据的图像在地图上均以标记显示：
+每张带有GPS数据的图像在地图上均以标记点呈现：
 
 ### 标记显示
 
-* 标记指示每张图像的精确GPS坐标位置
-* 缩小地图时，聚合标记可能成组显示
-* 放大地图可查看单张图像位置
+* 标记显示每张图像的精确GPS坐标位置
+* 缩小地图时，聚集的标记可能显示为聚合状态
+* 放大地图可查看单张图像的具体位置
 
-{%提示 style=&quot;success&quot; %}
-超级缩放：当达到地图瓦片提供商的最大缩放级别后，继续缩放时瓦片将被放大，以便查看紧密相邻的标记。
+{% hint style="success" %}
+超级缩放：当达到地图瓦片提供商的最大缩放级别后，继续放大时瓦片将被放大显示，从而可查看紧密相邻的标记。
 {% endhint %}
 
 ### 悬停预览
 
-* **将鼠标悬停**于任意标记点，即可查看该图像的缩略图预览
-* 无需离开地图视图即可快速进行视觉识别
-* 适用于在大型采集会话中定位特定图像
+* **将鼠标悬停**于任意标记点可查看图像缩略图
+* 无需离开地图视图即可快速视觉识别
+* 适用于在大型拍摄任务中定位特定图像
 
 ***
 
 ## 地图瓦片提供商
 
-{% 提示 style=&quot;success&quot; %}
+{% hint style="success" %}
 **自动选择**：Chloros会自动为当前地图位置选择最佳缩放级别的图块服务。您可根据需要手动切换提供商。
 {% endhint %}
 
@@ -72,12 +76,12 @@
 
 ### Google地图
 
-* 来自Google的标准卫星及地图影像
-* 全球覆盖范围最优
+* 提供Google标准卫星及地图影像
+* 全球覆盖范围最广
 
 ### ESRI
 
-* 来自ESRI ArcGIS的卫星及航拍影像
+* 提供ESRI ArcGIS卫星及航拍影像
 * 特定区域常提供更高分辨率影像
 
 ***
@@ -88,7 +92,7 @@
 
  <img src="../.gitbook/assets/image (23).png" alt="" data-size="line">### 地形图
 
-显示高程剖面及包含细节（道路等）的地图瓦片
+显示海拔剖面图及包含细节（道路等）的地图瓦片
 
 ### 地图
 
@@ -109,11 +113,13 @@
 ### 缩放控制
 
 * **缩放**：使用鼠标滚轮或缩放按钮
-* **全屏**：将地图全屏显示
+* **全屏**：将地图切换为全屏模式
 
 ### 平移控制
 
-* **平移**：点击并拖动以移动地图视图***
+* **平移**：点击并拖动以移动地图视图
+
+***
 
 ## 应用场景
 
@@ -126,14 +132,14 @@
 ### 地面勘测复核
 
 * 查看地面拍摄点的空间分布
-* 定位校准目标图像在勘测区域中的位置
+* 定位校准目标图像相对于勘测区域的位置
 * 规划补充拍摄点
 
 ### 质量控制
 
-* 快速识别异常位置拍摄的图像
+* 快速识别意外位置拍摄的图像
 * 验证数据集GPS定位精度
-* 交叉比对图像位置与现场记录
+* 通过现场记录交叉核对图像位置
 
 ***
 
@@ -147,9 +153,9 @@
 * 拍摄时相机GPS功能关闭
 * EXIF数据被外部软件删除
 
-**解决方案：**确认相机GPS功能开启状态，并重新导入原始文件
+**解决方案：**确认相机GPS功能已开启，并重新导入原始文件
 
-### 标记位置偏差
+### 定位标记位置错误
 
 **可能原因：**
 
