@@ -1,10 +1,10 @@
 # 地图标记
 
-地图选项卡会根据图像的GPS坐标，在交互式二维地图上显示您的图像。这可为您提供拍摄会话的地理概览，并帮助您可视化空间覆盖范围。在首次导入图像时，此功能还可快速移除无需处理的图像。
+地图选项卡会根据图像的GPS坐标，在交互式二维地图上显示您的图像。这为您提供拍摄过程的地理概览，并帮助您可视化空间覆盖范围。在首次导入图像时，此功能还可快速移除无需处理的图像。
 
 <figure><img src="../.gitbook/assets/chloros_map_markers.gif" alt=""><figcaption></figcaption></figure>
 
-## 访问地图标签页
+## 访问地图选项卡
 
 1. 在Chloros中打开或创建项目
 2. 导入含GPS元数据的图像
@@ -12,27 +12,25 @@
 4. 地图将显示每张图像GPS位置的标记点
 
 {% hint style="info" %}
-**GPS必备条件**：仅EXIF元数据中嵌有GPS坐标的图像会显示在地图上。拍摄时请确保相机GPS功能处于开启状态。
+**GPS必备条件**：仅EXIF元数据中嵌有GPS坐标的图像会显示在地图上。请确保拍摄时相机已开启GPS功能。
 {% endhint %}
 
 ***
 
-## 通过地图标签调整图像
-
-**地图** <img src="../.gitbook/assets/image (3).png" alt="" data-size="line"> 标签页具备与  <img src="../.gitbook/assets/image.png" alt="" data-size="line">   <img src="../.gitbook/assets/image (1).png" alt="" data-size="line">  和删除  <img src="../.gitbook/assets/image (2).png" alt="" data-size="line">  文件按钮与[**文件浏览器**](../processing-images-gui/adding-files-to-a-project.md) <img src="../.gitbook/assets/icon_file-browser.JPG" alt="" data-size="line"> 标签页相同。同时显示相同的项目文件表格列表，但列标题有所不同：
+## 通过地图标签调整图像**地图**<img src="../.gitbook/assets/image (3).png" alt="" data-size="line"> 标签页具备与  <img src="../.gitbook/assets/image.png" alt="" data-size="line">   <img src="../.gitbook/assets/image (1).png" alt="" data-size="line">  和删除  <img src="../.gitbook/assets/image (2).png" alt="" data-size="line">  文件按钮与[**文件浏览器**](../processing-images-gui/adding-files-to-a-project.md) <img src="../.gitbook/assets/icon_file-browser.JPG" alt="" data-size="line"> 标签页相同。同时显示相同的项目文件表格列表，但列标题有所不同：
 
 ### 文件名
 
 * 相机原始文件名
-* 保持相机命名规范（例如：IMG\_0001.RAW）
+* 保留相机命名规范（例如：IMG\_0001.RAW）
 
 ### 纬度
 
-* 图像纬度
+* 图像拍摄纬度
 
 ### 经度
 
-* 图像经度
+* 图像拍摄经度
 
 ### 海拔
 
@@ -46,7 +44,7 @@
 
 ## 图像标记
 
-每张带有GPS数据的图像在地图上均以标记点呈现：
+每张带有GPS数据的图像在地图上均以标记显示：
 
 ### 标记显示
 
@@ -72,12 +70,12 @@
 **自动选择**：Chloros会自动为当前地图位置选择最佳缩放级别的图块服务。您可根据需要手动切换提供商。
 {% endhint %}
 
-地图选项卡支持两种背景地图图像的图块提供商：
+地图选项卡支持两种背景地图图像图块提供商：
 
 ### Google地图
 
 * 提供Google标准卫星及地图影像
-* 全球覆盖范围最广
+* 全球覆盖范围最优
 
 ### ESRI
 
@@ -90,9 +88,9 @@
 
 可选择地图图层类型（从左至右）：
 
- <img src="../.gitbook/assets/image (23).png" alt="" data-size="line">### 地形图
+ <img src="../.gitbook/assets/image (23).png" alt="" data-size="original">### 地形图
 
-显示海拔剖面图及包含细节（道路等）的地图瓦片
+显示高程剖面及包含细节（道路等）的地图瓦片
 
 ### 地图
 
@@ -113,13 +111,11 @@
 ### 缩放控制
 
 * **缩放**：使用鼠标滚轮或缩放按钮
-* **全屏**：将地图切换为全屏模式
+* **全屏**：将地图全屏显示
 
 ### 平移控制
 
-* **平移**：点击并拖动以移动地图视图
-
-***
+* **平移**：点击并拖动以移动地图视图***
 
 ## 应用场景
 
@@ -129,17 +125,17 @@
 * 识别影像覆盖的空白区域
 * 验证飞行路径执行情况
 
-### 地面勘测复核
+### 地面勘测回溯
 
-* 查看地面拍摄点的空间分布
-* 定位校准目标图像相对于勘测区域的位置
+* 观察地面拍摄点的空间分布
+* 定位校准目标影像在勘测区域中的位置
 * 规划补充拍摄点
 
 ### 质量控制
 
-* 快速识别意外位置拍摄的图像
+* 快速识别异常位置拍摄的图像
 * 验证数据集GPS定位精度
-* 通过现场记录交叉核对图像位置
+* 交叉比对图像位置与现场记录
 
 ***
 
@@ -155,7 +151,7 @@
 
 **解决方案：**确认相机GPS功能已开启，并重新导入原始文件
 
-### 定位标记位置错误
+### 标记位置错误
 
 **可能原因：**
 
