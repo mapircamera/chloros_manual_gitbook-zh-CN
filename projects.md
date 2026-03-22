@@ -1,13 +1,29 @@
 # 图形用户界面：项目
 
-Chloros 允许您创建项目，这些项目可在未来重新打开。
+Chloros 允许您创建项目，以便日后重新打开。
 
 ## 新建项目
 
-<figure><img src=".gitbook/assets/project_new.JPG" alt=""><figcaption></figcaption></figure>从主菜单选择&quot;新建项目&quot;，并为项目输入唯一名称。
+<figure><img src=".gitbook/assets/project_new.JPG" alt=""><figcaption></figcaption></figure>从主菜单中选择“新建项目”，并为您的项目输入一个唯一的名称。
 
 ## 打开项目
 
-<figure><img src=".gitbook/assets/project_open.JPG" alt=""><figcaption></figcaption></figure>选择&quot;打开项目&quot;可查看项目文件夹中的现有项目列表。若无项目存在，侧边菜单将不会展开。上图所示为GUI创建的项目（t1、t2、t3）。DATE\_TIME项目由CLI使用默认命名规则生成。点击任意项目名称即可打开。
+<figure><img src=".gitbook/assets/project_open.JPG" alt=""><figcaption></figcaption></figure>选择“打开项目”可查看项目文件夹中现有项目的列表。若不存在任何项目，则次级侧边菜单不会打开。您可以在上图中看到一些由 GUI 创建的项目（t1、t2、t3）。DATE\_TIME 格式的项目是由 CLI 采用默认项目命名方案创建的。点击任何项目名称即可打开该项目。
 
-点击&quot;打开项目文件夹&quot;按钮将打开计算机文件资源管理器并定位至项目路径。您可在[项目设置](project-settings/project-settings.md)中调整项目路径。
+点击“打开项目文件夹”按钮将打开计算机文件资源管理器并跳转至项目路径。您可以在[项目设置](project-settings/project-settings.md)中调整项目路径。
+
+## 添加文件
+
+打开项目后，从主菜单中选择“添加文件”，即可将单个图像文件添加到当前项目中。此功能与文件浏览器的添加功能相同，但为方便起见，可直接通过主菜单访问。
+
+## 添加文件夹
+
+打开项目后，从主菜单中选择“添加文件夹”，即可将整个图像文件夹添加到当前项目中。重复文件将被忽略。
+
+## 开始/停止处理
+
+文件添加到项目后，主菜单中将出现“开始处理”选项。此操作与点击顶部标题栏中的“播放/开始”按钮效果相同。处理过程中，该菜单项将变为“停止处理”，以便您中断处理流程。
+
+{% hint style="info" %}
+“添加文件”、“添加文件夹”以及“开始/停止处理”菜单项仅在项目已打开且已添加文件时可见或可用。它们提供了快速访问这些操作的途径，这些操作也可通过“文件浏览器”侧边栏和顶部标题栏按钮实现。
+{% endhint %}
