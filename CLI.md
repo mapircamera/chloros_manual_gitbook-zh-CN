@@ -1,1203 +1,281 @@
 # CLI：命令行
 
-<figure><img src=".gitbook/assets/cli.JPG" alt=""><figcaption></figcaption></figure>**Chloros CLI** 提供了对 Chloros 图像处理引擎的强大命令行访问功能，可为您的图像处理工作流实现自动化、脚本化和无头操作。
+> **完整参考：**[CLI 参考](reference/cli-reference.md) 记录了**每个子命令的每个参数**，并针对 AI 助手进行了优化——将它的 URL 粘贴到您的助手中，并询问有效的命令：`https://mapir.gitbook.io/chloros/reference/cli-reference`
+>
+> **AI 工具使用提示：** 本手册的任意页面均可通过在其 URL 后追加 `.md` （例如 `https://mapir.gitbook.io/chloros/reference/cli-reference.md`），而 `https://mapir.gitbook.io/chloros/llms.txt` 可为大语言模型（LLM）提供整本手册的索引。
 
-### 主要功能
+<figure><img src=".gitbook/assets/cli.JPG" alt=""><figcaption></figcaption></figure>
+<!-- SCREENSHOT-UPDATE: banner shows CLI 1.1.0; reshoot the CLI welcome/banner output on the 1.2.0 build so the version line reads "Chloros CLI 1.2.0" -->
+## 什么是 CLI
 
-* 🚀 **自动化** - 通过脚本批量处理多个数据集
-* 🔗 **集成** - 嵌入现有工作流和管道
-* 💻 **无头运行** - 无需图形界面即可运行
-* 🌍 **多语言支持** - 支持 38 种语言
-* ⚡ **并行处理** - [动态计算适配](processing-architecture/dynamic-compute-adaptation.md) 可根据您的硬件自动进行优化
+`chloros-cli` 是与 Chloros 桌面应用程序所使用的同一处理引擎对应的命令行前端。 它是一个基于 Chloros 后端（位于 `127.0.0.1:5000` 上的本地服务器）的轻量级 HTTP 客户端——大多数命令会自动启动后端， 因此脚本只需调用一次 `chloros-cli process …` 即可。
 
-### 系统要求
-
-| 要求                        | 详细信息                                                             |
-| -------------------- | ------------------------------------------------------------------- |
-| **操作系统** | Windows 10/11 (64 位), Linux x86_64 (amd64), Linux arm64 (NVIDIA Jetson JetPack 6) |
-| **许可证**          | Chloros+ ([需付费计划](https://cloud.mapir.camera/pricing)) |
-| **内存**           | 至少 8GB RAM（建议 16GB）                                  |
-| **网络**         | 许可证激活必备                                     |
-| **磁盘空间**       | 视项目大小而定                                              |
-
-{% hint style="warning" %}
-**许可证要求**：CLI 需要付费的 Chloros+ 订阅。 标准（免费）套餐不包含 CLI 访问权限。请访问 [https://cloud.mapir.camera/pricing](https://cloud.mapir.camera/pricing) 进行升级。
-{% endhint %}
-
-## 快速入门
-
-### 安装
-
-#### Windows
-
-CLI 已自动包含在 Chloros 安装程序中：
-
-1. 下载并运行 **Chloros Installer.exe**
-
-2. 完成安装向导
-3. CLI 安装路径：`C:\Program Files\Chloros\resources\cli\chloros-cli.exe`
-
-{% hint style="success" %}
-安装程序会自动将 `chloros-cli` 添加到系统 PATH 中。安装完成后请重启终端。
-{% endhint %}
-
-#### Linux
-
-请安装适用于您系统架构的 `.deb` 软件包：
+它可在 **Windows 10/11 (x64)**和**Linux (x86_64，以及运行于 JetPack 6 上的 NVIDIA Jetson arm64)** 上运行， 可在任何终端中运行，无需图形界面。请使用以下命令验证安装：
 
 ```bash
-# Linux amd64
+chloros-cli --version    # prints "Chloros CLI 1.2.0"
+```
+
+命令家族一览：
+
+* **处理与账户** — `process`、`login`、`logout`、`status`、 `export-status`、`language`（支持 38 种语言——详见 [支持的语言](supported-languages.md)）， `set-project-folder` / `get-project-folder` / `reset-project-folder`, `selftest`, `update` (仅限 Linux/Jetson)
+* **实时硬件** — `lattice`（LATTICE 相机控制，45+ 个子命令），`daq pool-*`（DAQ 光传感器），`time-sync` (PTP)
+* **自动化** — `project`（无头模式下运行已保存的 Chloros 项目，包括 YAML 捕获配方）
+
+值得了解的全局选项：`--port N`（后端端口，默认 `5000`）、`-v/--verbose`、 `--restart`（强制重启后端），`--backend-exe PATH`。 完整列表请参阅 [CLI 参考文档](reference/cli-reference.md)。
+
+***
+
+## 安装
+
+在所有平台上，CLI **均包含在 Chloros 安装程序中** —— 没有单独的 CLI 下载包。 请从 [下载](download.md) 页面获取安装程序。
+
+### Windows
+
+安装程序将 CLI 放置在：
+
+```
+
+C:\Program Files\Chloros\cli\chloros-cli.exe
+```
+
+并将该文件夹添加到系统的 `PATH` 目录中 —— 安装完成后请**打开一个新的终端**，以便系统能识别更新后的 `PATH`。安装程序还会在安装根目录下放置启动脚本 （`Chloros_CLI.bat` / `Chloros_CLI.ps1`）放置在安装根目录下，并添加了一个**Chloros CLI** 开始菜单快捷方式，每个快捷方式都会打开一个终端，其中已预装好 `chloros-cli` 并可立即使用。
+
+### Linux
+
+请安装适用于您系统架构的 `.deb`：
+
+```bash
+# Linux x86_64
 sudo dpkg -i chloros-amd64.deb
 
-# Linux arm64 (NVIDIA Jetson, JetPack 6)
+# NVIDIA Jetson (arm64, JetPack 6)
 sudo dpkg -i chloros-arm64-jp6.deb
 ```
 
-有关 Linux 的详细设置，请参阅 [Linux 安装](linux/linux-installation.md)。
+这将安装 `chloros-cli` 至 `/usr/bin/chloros-cli` （当前版本为 `PATH`），并将后端升级至 `/usr/lib/chloros/chloros-backend`，同时安装 LATTICE 相机所需的 Arena SDK 运行时。 详情请参阅 [Linux 安装指南](linux/linux-installation.md)。
 
-### 首次设置
+### 验证
 
-在使用 CLI 之前，请激活您的 Chloros+ 许可证：
+```bash
+chloros-cli --version    # "Chloros CLI 1.2.0"
+chloros-cli selftest     # 7-step diagnostic: backend, API, GPU/CUDA, denoiser models
+chloros-cli status       # license tier + logged-in user
+```
 
-**Windows:**
+***
 
-```powershell
-# Login with your Chloros+ account
-chloros-cli login user@example.com 'your_password'
+## 登录与授权
 
-# Check license status
+访问 CLI（以及 Python 和 SDK）需要 **付费的 Chloros+ 套餐**——任何付费套餐均包含此功能；免费套餐则不包含。该限制由后端在**服务器端**强制执行，而非由 CLI 二进制文件执行： 未登录状态下的调用将被以 `401 AUTH_REQUIRED` 状态码拒绝，而免费套餐下已登录状态的调用将被以 `403 PLAN_UPGRADE_REQUIRED` 状态码拒绝，无论该调用来自 `chloros-cli`、 SDK，还是自定义的 HTTP 客户端。请在 [https://cloud.mapir.camera/pricing](https://cloud.mapir.camera/pricing) 处进行升级。**每台机器登录一次**：
+
+```bash
+chloros-cli login user@example.com 'YourPassword'
 chloros-cli status
-
-# Process your first project
-chloros-cli process "C:\Images\Dataset001"
 ```
 
-**Linux:**
+<figure><img src=".gitbook/assets/cli login_w.JPG" alt=""><figcaption></figcaption></figure>
+<!-- SCREENSHOT-UPDATE: login success output predates 1.2.0; reshoot `chloros-cli login` followed by `chloros-cli status` on the 1.2.0 build showing the license tier line -->
+{% hint style="warning" %}
+**包含特殊字符的密码**（`$`, `!`, spaces): wrap the password in**single quotes**, as shown above. In PowerShell double quotes, `$$` 会被 shell 篡改（CLI 会在 401 错误时检测到此问题并自动重试，但使用单引号可完全避免该问题）。
+{% endhint %}
 
-```bash
-# Login with your Chloros+ account
-chloros-cli login user@example.com 'your_password'
+会话被缓存于 `~/.chloros/user_session.json` 中，并在套餐的宽限期内保持离线运行（月度套餐为 30 天，年度套餐则持续至到期）。 即使没有付费套餐，`chloros-cli status` 也能正常工作，因此拒绝的原因始终可见。
 
-# Check license status
-chloros-cli status
-
-# Process your first project
-chloros-cli process ~/images/dataset001
-```
-
-### 基本用法
-
-使用默认设置处理文件夹：
-
-**Windows:**
-
-```powershell
-chloros-cli process "C:\Images\Dataset001"
-```
-
-**Linux:**
-
-```bash
-chloros-cli process ~/images/dataset001
-```
+{% hint style="danger" %}
+**要调度无界面任务？请先登录。**若在**无缓存会话**的情况下运行后端进程生成命令（`process`、`status`、 `export-status` 等）若在**无缓存会话**的情况下运行，不会快速失败——而是会切换到交互式 `Email:` / `Password:` 提示符，并通过标准输入（stdin）接收命令。 因此，无人值守的 cron 任务或 CI 步骤将**因等待输入而挂起**。在安排任何任务之前，请先在机器上运行一次 `chloros-cli login EMAIL 'PASSWORD'`。
+{% endhint %}
 
 ***
 
-## 命令参考
+## 您的首次处理运行
 
-### 通用语法
+将 `process` 指向捕获文件夹——它会自动检测 Survey3（`.raw` + `.jpg`）、 LATTICE（`.tif`/`.tiff`）、`.dng`，或混合类型：
+
+```bash
+chloros-cli process "C:\Images\flight_001"          # Windows
+chloros-cli process ~/images/flight_001              # Linux
+```
+
+每个管道线程（检测、分析、处理、导出）都会实时显示进度流，成功运行后会报告写入的图像产品数量（`Image products written: N`）。
+
+<!-- SCREENSHOT-NEEDED: terminal capture of a `chloros-cli process` run on a LATTICE captures folder completing successfully — per-thread progress lines visible and the final "Image products written: N" summary line -->
+### 输出文件的位置
+
+`process` 将输出写入 **项目文件夹**，而非您的输入文件夹：
+
+* 若未指定 `-o`：项目将创建在您的默认项目文件夹下（与图形用户界面共享；可通过 `get-project-folder` / `set-project-folder`，备用方案为 `~/Chloros Projects`)，若未指定名称，则由 `-n/--project-name` 或时间戳（`YYYYMMDD_HHMMSS`）命名。
+* 若使用 `-o PATH`：该文件夹 **即** 为项目文件夹。 如果该文件夹中已存在 `project.json`，则会创建后缀为 `_1`/`_2`… 的子文件夹，而非覆盖原有文件。
+
+在项目内部，产品会**按相机分类，然后按文件格式分类**：
 
 ```
-chloros-cli [global-options] <command> [command-options]
+<project>/
+├── project.json
+├── calibration_data.json
+└── LATT-M3M-L41-F550/                  # one folder per camera model+lens+filter
+    ├── tiff16/
+    │   ├── Reflectance_Calibrated_Images/
+    │   ├── Debayered_Images/
+    │   ├── Preview_Images/
+    │   └── NDVI_Index_Images/           # one folder per requested index
+    └── tiff32/
+        └── Radiance_Images/             # float32 radiance always lands here
 ```
+
+LATTICE 的相机文件夹为 `LATT-<sensor>-<lens>-F<filter>`（与拍摄文件的 EXIF 中的 `Model` 对应），而 `<model>_<filter>` （例如 `Survey3N_RGN`）对应 Survey3。 格式文件夹的命名遵循 `--format` 的格式：`tiff16`、`tiff8`、`png8`、 `jpg8`，或 `tiff32` 对应 `TIFF (32-bit, Percent)`。
+
+{% hint style="info" %}
+**每个导出的产品都保留源文件的名称。**`capture_..._raw.tif` 的 Radiance 导出文件仍命名为 `capture_..._raw.tif` —— 它只是位于 `tiff32/Radiance_Images/` 目录下。**文件夹而非文件名用于标识生成文件**，因此应使用通配符匹配目录，而非 `*radiance*` 这样的后缀。
+{% endhint %}
+
+### 您实际会用到的选项
+
+| 标志 | 默认值 | 功能说明 |
+| --- | --- | --- |
+| `-o, --output PATH` | 默认项目文件夹 | 项目文件夹位置（参见上文）。 |
+| `-n, --project-name NAME` | 时间戳 | 项目名称。 |
+| `--format FMT` | `TIFF (16-bit)` | 选自 `TIFF (16-bit)`、 `TIFF (32-bit, Percent)`、`PNG (8-bit)`、`JPG (8-bit)` 中的一个。 |
+| `--indices NAME [NAME ...]` | 无 | 待导出的植被指数（参见 [植被指数](#vegetation-indices)）。 |
+| `--debayer {standard,texture-aware}` | `standard` | `texture-aware` = 神经网络去拜耳化，速度较慢，质量最高（Chloros+，NVIDIA GPU）。 |
+| `--vignette / --no-vignette` | 启用 | 暗角校正。 |
+| `--reflectance / --no-reflectance` | 启用 | 反射率校准；对于 LATTICE 而言，此选项同时用于切换反射率产品。 |
+| `--input-level {auto,raw,debayered,processed}` | `auto` | 强制 LATTICE TIFF 文件的处理管道入口点。 |
+
+关于其他所有内容——目标检测调整、PPK、曝光定位点、阵列对齐标志——请参阅[`process`部分的CLI参考文档](reference/cli-reference.md)中的[`process`部分]。
 
 ***
 
-## 命令
+## 选择要导出的内容（LATTICE 产品）
 
-### `process` - 处理图像
+LATTICE 处理会在 **单次处理中**扩展到所有适用产品。每个产品的四个开关**默认均处于开启状态**；请使用 `--no-` 表单关闭其中一个：
 
-对文件夹中的图像进行校准处理。
+| 开关 | 产品 |
+| --- | --- |
+| `--debayered` | 线性去马赛克 → `Debayered_Images/` |
+| `--preview` | 显示预览（白平衡 + 伽马校正；多光谱图像的伪彩色拉伸） → `Preview_Images/` |
+| `--radiance` | float32 辐射度，W/m²/sr/nm → `Radiance_Images/`（始终为 `tiff32/`） |
+| `--reflectance` | uint16 反射率，Pix4D 兼容 → `Reflectance_Calibrated_Images/` |
 
-**语法：**
+RGB 主摄像头仅输出去拜耳化后的数据 + 预览数据 —— 对于宽带传感器而言，各波段的辐射度/反射率没有实际意义，因此这些开关对它们而言是无操作的。 Survey3 `.raw` 忽略这些切换选项，并遵循标准的反射率/目标路径。
 
 ```bash
-chloros-cli process <input-folder> [options]
+# Radiance only — no DAQ downwelling needed
+chloros-cli process ~/captures/lattice_flight --no-debayered --no-preview --no-reflectance
 ```
 
-**示例：**
+**`--reflectance-source {auto,target,daq}`**（默认 `auto`）选择反射率参考：`auto` 生成一个通过质量保证（QA）检测的帧内 [校准目标](calibration-targets.md) 作为绝对参考，当无目标存在时，则回退至数据采集（DAQ）光传感器向下辐射分界值（ρ = π·L/E）；`target` 采用严格模式（不进行数据采集替换）； `daq` 以数据采集（DAQ）结果为准。可通过 `--target-reflectance-dir` 提供按单位测量的目标扫描数据。
 
-```bash
-# Windows
-chloros-cli process "C:\Datasets\Survey_001" --vignette --reflectance
+{% hint style="info" %}
+**读取反射率像素：**表示 ρ = 1.0 的 DN 值是**按光源计算的** — LATTICE 文件会在 XMP 中标记 `Chloros:PixelScale=32768`；Survey3 文件使用 65535（且不包含 `Chloros:*` 标签）。 请读取该标签并以此为基准进行除法运算，而非假设其为常数。详细信息及一个刻意设计的无比例尺边界情况，请参见 [CLI 参考文档](reference/cli-reference.md)。
+{% endhint %}
 
-# Linux
-chloros-cli process ~/datasets/survey_001 --vignette --reflectance
-```
+**处理始终从 `raw` 开始。** 衍生产品（去拜耳化/辐射度/反射率导出）绝不会被重新输入到处理管道中——重新导入并处理它们会导致校准运算被重复应用，因此 Chloros 会跳过它们并明确说明这一点。 `--input-level` 是当您确实需要强制指定入口点时，特意设置的“后门”。***
 
-#### 处理命令选项
+## 运行失败时
 
-| 选项                | 类型    | 默认值        | 描述                                                                            |
-| --------------------- | ------- | -------------- | -------------------------------------------------------------------------------------- |
-| `<input-folder>`      | 路径    | _必填_     | 包含 RAW/JPG 多光谱图像的文件夹                                         |
-| `-o, --output`        | 路径    | 与输入相同  | 处理后图像的输出文件夹                                                     |
-| `-n, --project-name`  | 字符串  | 自动生成 | 自定义项目名称                                                                    |
-| `--vignette`          | 标志    | 已启用        | 启用暗角校正                                                             |
-| `--no-vignette`       | 标志    | -              | 禁用暗角校正                                                            |
-| `--reflectance`       | 标志    | 已启用        | 启用反射率校准                                                         |
-| `--no-reflectance`    | 标志    | -              | 禁用反射率校准                                                        |
-| `--ppk`               | 标志    | 禁用       | 应用来自 .daq 光传感器数据的 PPK 校正                                      |
-| `--format`            | 选项  | TIFF (16 位)  | 输出格式：`TIFF (16-bit)`、`TIFF (32-bit, Percent)`、`PNG (8-bit)`、`JPG (8-bit)` |
-| `--min-target-size`   | 整数 | 自动           | 校准面板检测的最小目标像素尺寸                          |
-| `--target-clustering` | 整数 | 自动           | 目标聚类阈值 (0-100)                                                    |
-| `--debayer`           | 选项  | `standard`     | 去拜耳化方法：`standard` 或 `texture-aware`（仅限 Chloros+）                          |
-| `--target`, `--targets` | 标志  | 禁用       | 仅在“target”或“targets”子文件夹中搜索校准目标（加快处理速度） |
-| `--indices`           | 列表    | 无           | 待计算的植被指数（例如：`--indices NDVI NDRE GNDVI`）                    |
-| `--exposure-pin-1`    | 字符串  | 无           | 锁定相机型号的曝光参数（引脚 1）                                                 |
-| `--exposure-pin-2`    | 字符串  | 无           | 相机型号的曝光锁定（引脚 2）                                                 |
-| `--recal-interval`    | 整数 | 自动           | 重新校准间隔（秒）                                                      |
-| `--timezone-offset`   | 整数 | 0              | 时区偏移（小时）                                                               |
+从 1.2.0 版本开始，`process` 会明确报错，而不是“成功”却没有任何输出：
+
+* 那些**请求了产品但未写入任何产品**的运行——仅限 `project.json` 和 `calibration_data.json` ——会输出 `Processing finished but wrote no image products.` 并**以非零状态退出**， 因此脚本可以检测到该情况。常见原因包括：输入文件夹未被识别为采集任务（请检查文件夹结构及 `--input-level`），或者所有请求的产品均不适用于这些相机（例如，仅使用 RGB 相机时，却请求了辐射度/反射率等参数，而这些相机仅支持辐射度/反射率）。
+* **刻意仅运行元数据**（所有产品选项均关闭，不使用 `--indices`）仍被视为成功——此时输出空图像即为正确结果。
+* 重新运行时使用 `--verbose`，并检查后端日志中是否包含 `[LATTICE-EXPORT]` / `[EXPORT-CHECK]` 相关行，这些行会说明各相机的跳过情况。
+
+退出代码：`0` 成功 · `1` 通用错误 · `2` 参数错误 · `130` 被 Ctrl+C 中断。
 
 ***
 
-### `login` - 账户认证
+## 植被指数
 
-请使用您的 Chloros+ 凭据登录，以启用 CLI 处理。
-
-**语法：**
+向 `--indices` 传递一个或多个预设名称；每个指数都会生成独立的 `<INDEX>_Index_Images/` 文件夹：
 
 ```bash
-chloros-cli login <email> <password>
+chloros-cli process ~/images/flight_001 --indices NDVI NDRE GNDVI
 ```
 
-**示例：**
+`process --indices` 支持的 22 个预设名称：
 
-```bash
-chloros-cli login user@example.com 'MyP@ssw0rd123'
-```
+`NDVI` `GNDVI` `NDRE` `OSAVI` `SAVI` `MSAVI2` `EVI` `MSR` `TDVI` `LAI` `GCI` `GRVI` `GSAVI` `GOSAVI` `NLI` `MNLI` `RDVI` `WDRVI` `CVI` `ENDVI` `GLI` `VARI`
 
 {% hint style="warning" %}
-**特殊字符**：若密码包含 `$`、`!` 或空格等字符，请使用单引号将其括起来。
-{% endhint %}
-
-**输出：**<figure><img src=".gitbook/assets/cli login_w.JPG" alt=""><figcaption></figcaption></figure>***
-
-### `logout` - 清除凭据
-
-清除存储的凭据并退出您的账户。
-
-**语法：**
-
-```bash
-chloros-cli logout
-```
-
-**示例：**
-
-```bash
-chloros-cli logout
-```
-
-**输出：**
-
-```
-✓ Logout successful
-ℹ Credentials cleared from cache
-```
-
-{% hint style="info" %}
-**SDK 用户**：Python SDK 还提供了一种编程方法，可在 Python 脚本中清除凭据。 详情请参阅 [Python SDK 文档](api-python-sdk.md#logout)。
+**共有三个索引列表——请勿混淆。**GUI 的“项目设置”下拉菜单中有 27 个公式（新增了 `FCI1`、`FCI2`、`GARI`、 `GEMI`、`LCI` ——这五个仅限图形用户界面使用，且**不**适用于 `--indices`）。 在线/离线模式下的 `lattice index --preset` 命令使用其独立的 22 项预设列表。公式和波段运算在 [多光谱指数公式](project-settings/multispectral-index-formulas.md) 中有详细说明。
 {% endhint %}
 
 ***
 
-### `status` - 检查许可证状态
+## DAQ 光传感器：简要介绍
 
-显示当前许可证和身份验证状态。
-
-**语法：**
+`daq pool-*` 系列驱动 MAPIR DAQ 光谱传感器（通过后端持久化池——GUI、CLI 和 SDK——实现 USB 接口的 DAQ-U、 通过 BLE 连接的 DAQ-M、通过以太网连接的 DAQ-E），这些传感器通过后端的持久化池进行驱动——GUI、CLI 和 SDK 均共享一个活动句柄。 **`pool-*` 是出厂版 CLI 中受支持的 DAQ 路径**； 您可能看到的其他 `daq` 子命令，实际上是 MAPIR 内部的仅源表面，执行时会因显式错误而退出，并提示您使用 `pool-*`。
 
 ```bash
-chloros-cli status
+# 1. Open a pooled session (pick the line matching your sensor)
+chloros-cli daq pool-connect                              # smart-detect
+chloros-cli daq pool-connect --port COM3                  # DAQ-U on a specific COM port
+chloros-cli daq pool-connect --mac AA:BB:CC:DD:EE:FF      # DAQ-M by BLE MAC
+chloros-cli daq pool-connect --eth-host daq-e-xxx.local   # DAQ-E by hostname (reliable)
+
+# 2. List pooled sensors and their ids
+#    (DAQ-U ids look like 'CB-7C-A8-2E-5F'; DAQ-E ids like 'daq-e-def330')
+chloros-cli daq pool-list
+
+# 3. Read the latest calibrated spectrum (W/m²/nm)
+chloros-cli daq pool-latest --sensor-id CB-7C-A8-2E-5F
+
+# 4. Record a calibrated .daq file for 60 s
+chloros-cli daq pool-record --sensor-id CB-7C-A8-2E-5F --duration 60 \
+  -o ~/Documents/spectra --device-name "field-A"
+
+# 5. Release
+chloros-cli daq pool-disconnect --sensor-id CB-7C-A8-2E-5F
 ```
 
-**示例：**
+`pool-record`（不带 `--duration`）将运行至 `pool-record --stop`； 默认输出目录位于 **后端机器上** 的 `~/Documents/DAQ Live View/`。 电容校正配置文件在连接时选择（`--cap-id`，后端默认 `sunshine_cosine`），并可通过 `pool-set-cap` ——关于电容校准配置文件和传感器的校准范围，请参阅本手册的 DAQ 章节。
 
-```bash
-chloros-cli status
-```
-
-**输出：**
-
-```
-╔══════════════════════════════════════╗
-║     LICENSE & ACCOUNT INFORMATION    ║
-╚══════════════════════════════════════╝
-
-📧 Email: user@example.com
-📋 Plan: Chloros+ Professional
-🔓 API/CLI Access: Enabled
-✓ Status: Active
-```
-
-***
-
-### `export-status` - 检查导出进度
-
-在处理过程中或处理结束后监控线程 4 的导出进度。
-
-**语法：**
-
-```bash
-chloros-cli export-status
-```
-
-**示例：**
-
-```bash
-chloros-cli export-status
-```
-
-**用例：** 在处理运行期间调用此命令以检查导出进度。***
-
-### `language` - 管理界面语言
-
-查看或更改 CLI 界面语言。
-
-**语法：**
-
-```bash
-# Show current language
-chloros-cli language
-
-# List all available languages
-chloros-cli language --list
-
-# Set a specific language
-chloros-cli language <language-code>
-```
-
-**示例：**
-
-```bash
-# View current language
-chloros-cli language
-
-# List all 38 supported languages
-chloros-cli language --list
-
-# Change to Spanish
-chloros-cli language es
-
-# Change to Japanese
-chloros-cli language ja
-```
-
-#### 支持的语言（共 38 种）
-
-| 代码    | 语言              | 本地名称      |
-| ------- | --------------------- | ---------------- |
-| `en`    | 英语               | English          |
-| `es`    | 西班牙语               | Español          |
-| `pt`    | 葡萄牙语            | Português        |
-| `fr`    | 法语                | Français         |
-| `de`    | 德语                | Deutsch          |
-| `it`    | 意大利语              | Italiano         |
-| `ja`    | 日语              | 日本語              |
-| `ko`    | 韩语                | 한국어              |
-| `zh`    | 简体中文        | 简体中文             |
-| `zh-TW` | 繁体中文        | 繁體中文             |
-| `ru`    | 俄语               | Русский          |
-| `nl`    | 荷兰语                | Nederlands       |
-| `ar`    | 阿拉伯语                | العربية          |
-| `pl`    | 波兰语                | Polski           |
-| `tr`    | 土耳其语               | Türkçe           |
-| `hi`    | 印地语                 | हिंदी            |
-| `id`    | 印尼语            | Bahasa Indonesia |
-| `vi`    | 越南语            | Tiếng Việt       |
-| `th`    | 泰语                  | ไทย              |
-| `sv`    | 瑞典语               | Svenska          |
-| `da`    | 丹麦语                | Dansk            |
-| `no`    | 挪威语             | Norsk            |
-| `fi`    | 芬兰语               | Suomi            |
-| `el`    | 希腊语                 | Ελληνικά         |
-| `cs`    | 捷克语                | Čeština          |
-| `hu`    | 匈牙利语             | Magyar           |
-| `ro`    | 罗马尼亚语              | Română           |
-| `uk`    | 乌克兰语             | Українська       |
-| `pt-BR` | 巴西葡萄牙语  | Português Brasileiro |
-| `zh-HK` | 粤语             | 粵語             |
-| `ms`    | 马来语                 | Bahasa Melayu    |
-| `sk`    | 斯洛伐克语                | Slovenčina       |
-| `bg`    | 保加利亚语             | Български        |
-| `hr`    | 克罗地亚语              | Hrvatski         |
-| `lt`    | 立陶宛语            | Lietuvių         |
-| `lv`    | 拉脱维亚语               | Latviešu         |
-| `et`    | 爱沙尼亚语              | Eesti            |
-| `sl`    | 斯洛文尼亚语             | Slovenščina      |
-
-{% hint style="success" %}
-**自动保存**：您的语言偏好设置将保存至 `~/.chloros/cli_language.json`，并在所有会话中保持有效。
+{% hint style="warning" %}
+**多网卡主机上的 DAQ-E：**即使传感器状态正常，启动后首次 `pool-connect --eth` 自动发现也可能失败。`--eth-host <ip-or-hostname>` 是可靠的配置方式——当发现失败时请使用该配置。
 {% endhint %}
 
 ***
 
-### `set-project-folder` - 设置默认项目文件夹
+## LATTICE 相机、PTP 与项目自动化
 
-更改默认项目文件夹位置（与 Windows 中的 GUI 共享）。
-
-**语法：**
+`lattice` 系列（45 多个子命令）涵盖了 LATTICE 相机的端到端操作：发现、单次拍摄、通过 GUI 的“智能预备连接”流程实现的持久同步数组、浏览器实时预览、对齐、索引计算以及主机网卡诊断。 示例：
 
 ```bash
-chloros-cli set-project-folder <folder-path>
+chloros-cli lattice info                                          # discover cameras
+chloros-cli lattice capture -o output/                            # one frame, all export types
+chloros-cli lattice array-connect --serials SN1,SN2,SN3,SN4       # persistent synced array
+chloros-cli lattice array-capture --processing reflectance -o out/
 ```
 
-**示例：**
+此外：`chloros-cli time-sync` 会报告由 Chloros 主机运行的 PTP 主时钟（LATTICE 相机和 DAQ-E 传感器以此为主时钟，以实现跨设备时间戳同步）， 而 `chloros-cli project` 则打开了一个已保存的 Chloros 项目，并在无头模式下驱动其中的相机、阵列和传感器——包括通过脚本调用的 YAML 采集配方。
 
-```bash
-# Windows
-chloros-cli set-project-folder "C:\Projects\2025"
+这三个系列（`lattice`、`project`、 `daq pool-*`）也是唯一支持使用 `CHLOROS_BACKEND_URL` 驱动 **远程** 后端的系列；核心命令始终针对本地机器。
 
-# Linux
-chloros-cli set-project-folder ~/projects/2025
-```
+完整的操作指南详见本手册的 LATTICE 章节；所有参数均收录于 [CLI 参考文档](reference/cli-reference.md)。
 
 ***
 
-### `get-project-folder` - 显示项目文件夹
-
-显示当前默认项目文件夹的位置。
-
-**语法：**
-
-```bash
-chloros-cli get-project-folder
-```
-
-**示例：**
-
-```bash
-chloros-cli get-project-folder
-```
-
-**输出：**
-
-```
-
-# Windows
-ℹ Current project folder: C:\Projects\2025
-
-# Linux
-ℹ Current project folder: /home/user/.local/share/chloros/projects
-```
-
-***
-
-### `reset-project-folder` - 恢复默认设置
-
-将项目文件夹重置为默认位置。
-
-**语法：**
-
-```bash
-chloros-cli reset-project-folder
-```
-
-***
-
-### `selftest` - 运行系统诊断
-
-运行 7 项诊断检查以验证系统配置。
-
-**语法：**
-
-```bash
-chloros-cli selftest
-```
-
-**执行的诊断项目：**
-
-1. 版本检查
-2. 端口可用性 (5000)
-3. 后端启动
-4. API 连接性测试
-5. 系统信息和 GPU 检测
-6. 降噪模型验证
-7. CUDA 可用性检查
-
-{% hint style="info" %}
-**故障排除提示**：安装完成后运行 `selftest` 以验证系统配置是否正确，特别是在 Linux/Jetson 平台上，可能需要验证 GPU 和 CUDA 的设置。
-{% endhint %}
-
-***
-
-### `update` - 检查更新（仅限 Linux）
-
-在 Linux 系统上检查并安装 CLI 更新。
-
-**语法：**
-
-```bash
-# Check for updates without installing
-chloros-cli update --check
-
-# Check for and install updates
-chloros-cli update
-```
-
-| 选项    | 描述                        |
-| --------- | ---------------------------------- |
-| `--check` | 仅检查更新，不安装 |
-
-{% hint style="info" %}
-此命令仅在 Linux 系统上可用。在 Windows 系统上，更新通过安装程序提供。
-{% endhint %}
-
-***
-
-## 全局选项
-
-以下选项适用于所有命令：
-
-| 选项            | 类型    | 默认值       | 描述                                      |
-| ----------------- | ------- | ------------- | ------------------------------------------------ |
-| `--backend-exe`   | 路径    | 自动检测 | 后端可执行文件的路径                       |
-| `--port`          | 整数 | 5000          | 后端 API 端口号                          |
-| `--restart`       | 标志    | -             | 强制重启后端（终止现有进程） |
-| `--version`       | 标志    | -             | 显示版本信息并退出                |
-| `--help`          | 标志    | -             | 显示帮助信息并退出                   |
-
-{% hint style="info" %}
-**后端自动检测**：`--backend-exe` 路径会根据平台自动检测：
-* **Windows**：`C:\Program Files\MAPIR\Chloros\resources\backend\chloros-backend.exe`
-* **Linux (.deb)**: `/usr/lib/chloros/chloros-backend`
-* **Linux (手动)**: `/opt/mapir/chloros/backend/chloros-backend`
-{% endhint %}
-
-**全局选项示例：**
-
-**Windows：**
-
-```powershell
-chloros-cli --port 5001 process "C:\Datasets\Survey_001"
-```
-
-**Linux：**
-
-```bash
-chloros-cli --port 5001 process ~/datasets/survey_001
-```
-
-***
-
-## 处理设置指南
-
-### 并行处理与动态计算适配
-
-Chloros 1.1.0 包含 [动态计算适配](processing-architecture/dynamic-compute-adaptation.md) — 处理引擎会 **自动检测您的硬件** 并选择最佳策略：
-
-| 平台 | 策略 | 工作线程 | 管道 | 备注 |
-| --- | --- | --- | --- | --- |
-| **Jetson Nano 8GB** | `GPU_SINGLE` | 1 | `tiled_gpu` | 内存高效，串行化 |
-| **Jetson Orin NX 16GB** | `GPU_PARALLEL` | 3 | `fused_gpu` | 并行 GPU 处理 |
-| **配备 8GB GPU 的台式机** | `GPU_SINGLE` | 3 | `tiled_gpu` | 良好的台式机性能 |
-| **配备 12GB+ GPU 的台式机** | `GPU_PARALLEL` | 3-4 | `fused_gpu` | 最佳台式机性能 |
-| **仅CPU系统** | `CPU_PARALLEL` | 核心数 - 1 | `cpu_fallback` | 无需GPU |
-
-{% hint style="success" %}
-**无需手动配置！** Chloros 会自动检测您的 CPU、GPU、内存以及（在 Jetson 上）温度传感器，然后自动配置最佳处理流程。
-{% endhint %}
-
-### 去拜耳滤波方法
-
-| 方法 | CLI 标志 | 质量 | 速度 | 许可证 |
-| --- | --- | --- | --- | --- |
-| **标准 (快速，中等质量)** | `--debayer standard` | 良好 | 快速 | 免费 / Chloros+ |
-| **纹理感知 (慢速，最高质量)** | `--debayer texture-aware` | 最高 | 慢速 | 仅限 Chloros+ |
-
-默认去拜耳化方法为 **标准**。**纹理感知**方法采用 AI/ML 降噪模型以获得最高质量的输出，但需要 Chloros+ 许可证和 NVIDIA GPU。
-
-```bash
-# Use Texture Aware debayer (Chloros+ only)
-chloros-cli process ~/datasets/field_a --debayer texture-aware
-```
-
-### 暗角校正
-
-**功能说明：** 校正图像边缘的光线衰减（相机图像中常见的暗角现象）。
-
-* **默认启用** - 大多数用户应保持此功能启用
-* 使用 `--no-vignette` 禁用
-
-{% hint style="success" %}
-**建议**：始终启用暗角校正，以确保整个画面的亮度均匀。
-{% endhint %}
-
-### 反射率校准
-
-利用校准板将原始传感器值转换为标准化的反射率百分比。
-
-* **默认启用** - 植被分析必不可少
-* 图像中需包含校准目标板
-* 使用 `--no-reflectance` 禁用
-
-{% hint style="info" %}
-**要求**：确保校准面板在图像中曝光正确且可见，以实现准确的反射率转换。
-{% endhint %}
-
-### PPK 校正
-
-**功能说明：** 利用 DAQ-A-SD 日志数据应用后处理动态校正，以提高 GPS 精度。
-
-* **默认禁用**
-* 使用 `--ppk` 启用
-* 项目文件夹中需包含来自 MAPIR DAQ-A-SD 光传感器的 .daq 文件。
-
-### 输出格式
-
-<table><thead><tr><th width="197">格式</th><th width="130.20001220703125">位深度</th><th width="116.5999755859375">文件大小</th><th>最适合</th></tr></thead><tbody><tr><td><strong>TIFF (16位)</strong> ⭐</td><td>16 位整数</td><td>大</td><td>GIS 分析、摄影测量（推荐）</td></tr><tr><td><strong>TIFF (32 位，百分比)</strong></td><td>32 位浮点数</td><td>超大</td><td>科学分析、研究</td></tr><tr><td><strong>PNG (8 位)</strong></td><td>8 位整数</td><td>中</td><td>目视检查、网络共享</td></tr><tr><td><strong>JPG (8 位)</strong></td><td>8 位整数</td><td>小</td><td>快速预览、压缩输出</td></tr></tbody></table>***
-
-## 自动化与脚本编写
-
-### PowerShell 批处理 (Windows)
-
-在 Windows 上自动处理多个数据集文件夹：
-
-```powershell
-# process_all_datasets.ps1
-
-$datasets = Get-ChildItem "C:\Datasets\2025" -Directory
-
-foreach ($dataset in $datasets) {
-    Write-Host "Processing $($dataset.Name)..." -ForegroundColor Cyan
-    
-    chloros-cli process $dataset.FullName `
-        --vignette `
-        --reflectance
-    
-    if ($LASTEXITCODE -eq 0) {
-        Write-Host "✓ $($dataset.Name) complete" -ForegroundColor Green
-    } else {
-        Write-Host "✗ $($dataset.Name) failed" -ForegroundColor Red
-    }
-}
-
-Write-Host "All datasets processed!" -ForegroundColor Green
-```
-
-### Windows 批处理脚本 (Windows)
-
-Windows 上的简单循环批处理：
-
-```batch
-@echo off
-echo Starting batch processing...
-
-for /d %%i in (C:\Datasets\2025\*) do (
-    echo.
-    echo ========================================
-    echo Processing: %%i
-    echo ========================================
-    chloros-cli process "%%i"
-    
-    if %ERRORLEVEL% EQU 0 (
-        echo SUCCESS: %%i processed
-    ) else (
-        echo ERROR: %%i failed
-    )
-)
-
-echo.
-echo All datasets processed!
-pause
-```
-
-### Bash 批处理 (Linux)
-
-在 Linux 上处理多个数据集文件夹：
-
-```bash
-#!/bin/bash
-# process_all_datasets.sh
-
-for dataset in ~/datasets/2026/*/; do
-    name=$(basename "$dataset")
-    echo "Processing $name..."
-
-    chloros-cli process "$dataset" \
-        --vignette \
-        --reflectance
-
-    if [ $? -eq 0 ]; then
-        echo "✓ $name complete"
-    else
-        echo "✗ $name failed"
-    fi
-done
-
-echo "All datasets processed!"
-```
-
-### Python 自动化脚本（跨平台）
-
-带错误处理的高级自动化（适用于 Windows 和 Linux）：
-
-```python
-import subprocess
-import os
-import sys
-from pathlib import Path
-from datetime import datetime
-
-def process_dataset(input_folder):
-    """Process a folder using Chloros CLI"""
-    cmd = ['chloros-cli', 'process', str(input_folder)]
-    
-    # Execute command
-    result = subprocess.run(
-        cmd, 
-        capture_output=True, 
-        text=True,
-        encoding='utf-8'
-    )
-    
-    return result.returncode == 0, result.stdout, result.stderr
-
-def main():
-    """Process all datasets in a directory"""
-    # Adjust path for your platform
-    # Windows: Path('C:/Datasets/2025')
-    # Linux:   Path.home() / 'datasets' / '2025'
-    datasets_dir = Path('C:/Datasets/2025')
-    log_file = Path('processing_log.txt')
-    
-    successful = []
-    failed = []
-    
-    # Start processing
-    print(f"Starting batch processing: {datetime.now()}")
-    print(f"Scanning: {datasets_dir}")
-    print("=" * 60)
-    
-    for dataset_folder in sorted(datasets_dir.iterdir()):
-        if not dataset_folder.is_dir():
-            continue
-        
-        print(f"\nProcessing: {dataset_folder.name}")
-        
-        success, stdout, stderr = process_dataset(dataset_folder)
-        
-        if success:
-            print(f"✓ {dataset_folder.name} - SUCCESS")
-            successful.append(dataset_folder.name)
-        else:
-            print(f"✗ {dataset_folder.name} - FAILED")
-            failed.append(dataset_folder.name)
-            
-            # Log error details
-            with open(log_file, 'a', encoding='utf-8') as f:
-                f.write(f"\n=== {dataset_folder.name} - {datetime.now()} ===\n")
-                f.write(f"STDOUT:\n{stdout}\n")
-                f.write(f"STDERR:\n{stderr}\n")
-    
-    # Print summary
-    print("\n" + "=" * 60)
-    print(f"SUMMARY - Completed: {datetime.now()}")
-    print(f"  Successful: {len(successful)}")
-    print(f"  Failed: {len(failed)}")
-    
-    if failed:
-        print(f"\nFailed folders:")
-        for folder in failed:
-            print(f"  - {folder}")
-        print(f"\nCheck {log_file} for error details")
-        sys.exit(1)
-    else:
-        print("\nAll datasets processed successfully!")
-        sys.exit(0)
-
-if __name__ == '__main__':
-    main()
-```
-
-***
-
-## 处理工作流
-
-### 标准工作流
-
-1. **输入**：包含 RAW/JPG 图像对的文件夹
-2. **检测**：CLI 自动扫描支持的图像文件
-3. **处理**：并行模式根据您的 CPU 核心数进行扩展（Chloros+）
-4. **输出**：创建包含处理后图像的相机型号子文件夹
-
-### 输出结构示例
-
-```
-
-MyProject/
-├── project.json                             # Project metadata
-├── 2025_0203_193056_008.JPG                # Original JPG
-├── 2025_0203_193055_007.RAW                # Original RAW
-└── Survey3N_RGN/                           # Processed outputs ✓
-    ├── 2025_0203_193056_008_Reflectance.tif   # Calibrated reflectance
-    ├── 2025_0203_193056_008_Target.tif        # Target detection
-    └── ...
-```
-
-### 处理时间估算
-
-100 张图像（每张 12MP）的典型处理时间：
-
-| 平台 | 模式 | 预计时间 | 备注 |
-| --- | --- | --- | --- |
-| **台式机 12GB+ GPU** | `GPU_PARALLEL` | 5-10 分钟 | 最快选项 |
-| **台式机 8GB GPU** | `GPU_SINGLE` | 10-15 分钟 | 性能良好 |
-| **Jetson Orin NX 16GB** | `GPU_PARALLEL` | 15-25 分钟 | 边缘计算 |
-| **Jetson Nano 8GB** | `GPU_SINGLE` | 30-60 分钟 | 内存受限 |
-| **仅 CPU** | `CPU_PARALLEL` | 20-40 分钟 | 无需 GPU |
-
-{% hint style="info" %}
-**性能提示**：处理时间因图像数量、分辨率、去拜耳化方法和硬件而异。纹理感知去拜耳化比标准去拜耳化耗时显著更长。详情请参阅 [动态计算自适应](processing-architecture/dynamic-compute-adaptation.md)。
-{% endhint %}
-
-***
-
-## 故障排除
-
-### 未找到 CLI
-
-**Windows 错误：**
-
-```
-'chloros-cli' is not recognized as an internal or external command
-```
-
-**Windows 解决方案：**
-
-1. 验证安装位置：
-
-```powershell
-dir "C:\Program Files\Chloros\resources\cli\chloros-cli.exe"
-```
-
-2. 若未在 PATH 中，请使用完整路径：
-
-```powershell
-"C:\Program Files\Chloros\resources\cli\chloros-cli.exe" process "C:\Datasets\Field_A"
-```
-
-3. 手动添加到 PATH：
-   * 打开系统属性 → 环境变量
-   * 编辑 PATH 变量
-   * 添加：`C:\Program Files\Chloros\resources\cli`
-   * 重启终端
-
-**Linux 错误：**
-
-```
-chloros-cli: command not found
-```
-
-**Linux 解决方案：**
-
-1. 验证安装：
-
-```bash
-which chloros-cli
-dpkg -L chloros-amd64  # or chloros-arm64-jp6
-```
-
-2. 重新加载 shell：
-
-```bash
-source ~/.bashrc
-```
-
-3. 检查权限：
-
-```bash
-sudo chmod +x /usr/bin/chloros-cli
-```
-
-***
-
-### 后端启动失败**错误：**
-
-```
-
-Backend failed to start within 30 seconds
-```
-
-**解决方案：**
-
-1. 检查后端是否已运行（先关闭它）
-2. 检查防火墙是否阻挡（Windows）或检查端口可用性（Linux: `lsof -i :5000`）
-3. 尝试其他端口：
-
-```bash
-# Windows
-chloros-cli --port 5001 process "C:\Datasets\Field_A"
-
-# Linux
-chloros-cli --port 5001 process ~/datasets/field_a
-```
-
-4. 强制重启后端：
-
-```bash
-# Windows
-chloros-cli --restart process "C:\Datasets\Field_A"
-
-# Linux
-chloros-cli --restart process ~/datasets/field_a
-```
-
-5. 在 Linux 上，检查后端可执行文件是否存在：
-
-```bash
-ls -la /usr/lib/chloros/chloros-backend
-```
-
-***
-
-### 许可证/身份验证问题**错误：**
-
-```
-
-Chloros+ license required for CLI access
-```
-
-**解决方案：**
-
-1. 确认您拥有有效的 Chloros+ 订阅
-2. 使用您的凭据登录：
-
-```bash
-chloros-cli login user@example.com 'password'
-```
-
-3. 检查许可证状态：
-
-```bash
-chloros-cli status
-```
-
-4. 联系支持：info@mapir.camera
-
-***
-
-### 未找到图像**错误：**
-
-```
-
-No images found in the specified folder
-```
-
-**解决方案：**
-
-1. 确认文件夹中包含受支持的格式（.RAW、.TIF、.JPG）
-2. 检查文件夹路径是否正确（路径中含空格时请使用引号）
-3. 确保您对该文件夹具有读取权限
-4. 检查文件扩展名是否正确
-
-***
-
-### 处理卡顿或死机**解决方案：**
-
-1. 检查可用磁盘空间（确保有足够空间存储输出文件）
-2. 关闭其他应用程序以释放内存
-3. 减少图像数量（分批处理）
-
-***
-
-### 端口已被占用**错误：**
-
-```
-
-Port 5000 is already in use
-```
-
-**解决方案：**
-
-**Windows：**
-
-```powershell
-chloros-cli --port 5001 process "C:\Datasets\Field_A"
-```
-
-**Linux：**
-
-```bash
-# Find what's using port 5000
-lsof -i :5000
-
-# Use a different port
-chloros-cli --port 5001 process ~/datasets/field_a
-```
-
-***
-
-## 常见问题
-
-### 问：使用 CLI 需要许可证吗？
-
-**答：**需要！CLI 需要付费的**Chloros+ 许可证**。
-
-* ❌ 标准（免费）套餐：CLI 已禁用
-* ✅ Chloros+（付费）套餐：CLI 已完全启用
-
-订阅地址：[https://cloud.mapir.camera/pricing](https://cloud.mapir.camera/pricing)
-
-***
-
-### 问：我可以在没有图形界面的服务器上使用 CLI 吗？**答：** 可以！CLI 完全支持无头运行。这是 Linux 的主要使用场景。**Windows 服务器：**
-* Windows Server 2016 或更高版本
-* 已安装 Visual C++ 再分发包
-
-**Linux 服务器：**
-* Ubuntu 20.04+ / Debian 11+ (amd64) 或 JetPack 6 (arm64)
-* 通过 `.deb` 包安装
-
-**两平台共通：**
-* 至少 8GB 内存 （推荐 16GB）
-* 一次性许可证激活：`chloros-cli login user@example.com 'password'`
-
-***
-
-### 问：处理后的图像保存在哪里？**答：**默认情况下，处理后的图像保存在与输入文件相同的文件夹中，位于相机型号的子文件夹内（例如：`Survey3N_RGN/`）。
-
-使用 `-o` 选项指定其他输出文件夹：
-
-```bash
-# Windows
-chloros-cli process "C:\Input" -o "D:\Output"
-
-# Linux
-chloros-cli process ~/input -o ~/output
-```
-
-***
-
-### 问：能否同时处理多个文件夹？**A:** 无法通过单条命令直接实现，但您可以通过脚本依次处理文件夹。请参阅 [自动化与脚本](CLI.md#automation--scripting) 章节。***
-
-### Q: 如何将 CLI 的输出保存到日志文件中？**PowerShell:**
-
-```powershell
-chloros-cli process "C:\Datasets\Field_A" | Tee-Object -FilePath "processing.log"
-```
-
-**批处理：**
-
-```batch
-chloros-cli process "C:\Datasets\Field_A" > processing.log 2>&1
-```
-
-**Linux Bash：**
-
-```bash
-chloros-cli process ~/datasets/field_a 2>&1 | tee processing.log
-```
-
-***
-
-### 问：处理过程中按下 Ctrl+C 会发生什么？**A:** CLI 将：
-
-1. 正常停止处理
-2. 关闭后端
-3. 以代码 130 退出
-
-部分处理过的图像可能会保留在输出文件夹中。
-
-***
-
-### Q: 我可以自动化 CLI 的处理吗？**A:** 当然可以！CLI 专为自动化设计。请参阅 [自动化与脚本](CLI.md#automation--scripting) 以了解 PowerShell (Windows)、 批处理 (Windows)、Bash (Linux) 以及 Python（跨平台）示例。***
-
-### 问：如何查看 CLI 的版本？**答：**
-
-```bash
-chloros-cli --version
-```
-
-**输出：**
-
-```
-
-Chloros CLI 1.1.0
-```
+## 故障排除：前 5 大问题
+
+| 症状 | 解决方法 |
+| --- | --- |
+| `Login required` 或计划任务在 `Email:` 提示符处挂起 | 在该机器上运行一次 `chloros-cli login EMAIL 'PASSWORD'` —— 没有缓存会话的命令将以交互方式执行，而非立即失败。 |
+| `backend unreachable` | 启动 Chloros 桌面应用程序，或直接运行后端二进制文件（`chloros-backend`）。 若将 `lattice`/`project`/`daq pool-*` 指向远程后端，请检查 `CHLOROS_BACKEND_URL`。 |
+| 数组连接被阻塞：`FRAMES WILL DROP` / `Reduce ROI to enable` | 主机网卡接收环被重置为默认值——这是此前正常运行的设备拒绝连接的首要原因，通常发生在网卡驱动程序更新之后。 请在**提升权限**的终端上运行 `chloros-cli lattice network --fix`（或设置 `ReceiveBufferLen=256`、`PendingReceives=64`）；参见参考手册中的 *主机网卡设置与调优*。 |
+| `daq` 子命令退出：&quot;需要完整的数据采集（DAQ）软件包…&quot; | 出厂预装版本中应包含此功能——编译好的 CLI 仅包含 `daq pool-*` 系列，该系列涵盖连接、流传输、记录和采样点选择功能。 请使用 `pool-*`（或来自 Python 的 `chloros_sdk.connect_daq_sensor()`）。 |
+| Jetson 在处理大型文件夹前会显示交换警告 | 添加基于文件的交换空间 — CLI 会精确打印出需要执行的 `fallocate`/`swapon` 命令。 |
 
 ***
 
 ## 获取帮助
 
-### 命令行帮助
-
-直接在 CLI 中查看帮助信息：
-
 ```bash
-# General help
-chloros-cli --help
-
-# Command-specific help
-chloros-cli process --help
-chloros-cli login --help
-chloros-cli language --help
+chloros-cli --help              # top-level help
+chloros-cli process --help      # per-command help
+chloros-cli lattice --help
+chloros-cli daq --help          # lists the pool-* subcommands
 ```
 
-### 支持渠道
-
-* **电子邮件**：info@mapir.camera
-* **网站**：[https://www.mapir.camera/community/contact](https://www.mapir.camera/community/contact)
-* **定价**：[https://cloud.mapir.camera/pricing](https://cloud.mapir.camera/pricing)***
-
-## 完整示例
-
-### 示例 1：基本处理
-
-使用默认设置进行处理（晕影、反射率）：
-
-**Windows:**
-
-```powershell
-chloros-cli process "C:\Datasets\Field_A_2025_01_15"
-```
-
-**Linux:**
-
-```bash
-chloros-cli process ~/datasets/field_a_2025_01_15
-```
-
-***
-
-### 示例 2：高质量科学输出
-
-32 位浮点数 TIFF:**Windows:**
-
-```powershell
-chloros-cli process "C:\Datasets\Field_A" ^
-  --format "TIFF (32-bit, Percent)" ^
-  --vignette ^
-  --reflectance
-```
-
-**Linux:**
-
-```bash
-chloros-cli process ~/datasets/field_a \
-  --format "TIFF (32-bit, Percent)" \
-  --vignette \
-  --reflectance
-```
-
-***
-
-### 示例 3：快速预览处理
-
-8 位 PNG（未校准，用于快速审查）：
-
-**Windows:**
-
-```powershell
-chloros-cli process "C:\Datasets\Field_A" ^
-  --format "PNG (8-bit)" ^
-  --no-vignette ^
-  --no-reflectance
-```
-
-**Linux:**
-
-```bash
-chloros-cli process ~/datasets/field_a \
-  --format "PNG (8-bit)" \
-  --no-vignette \
-  --no-reflectance
-```
-
-***
-
-### 示例 4：PPK 校正处理
-
-应用基于反射率的 PPK 校正：
-
-**Windows:**
-
-```powershell
-chloros-cli process "C:\Datasets\Field_A" ^
-  --ppk ^
-  --reflectance
-```
-
-**Linux:**
-
-```bash
-chloros-cli process ~/datasets/field_a \
-  --ppk \
-  --reflectance
-```
-
-***
-
-### 示例 5：自定义输出位置
-
-以特定格式处理并输出到不同位置：
-
-**Windows:**
-
-```powershell
-chloros-cli process "C:\Input\Raw_Images" ^
-  -o "D:\Output\Processed" ^
-  --format "TIFF (16-bit)"
-```
-
-**Linux:**
-
-```bash
-chloros-cli process ~/input/raw_images \
-  -o ~/output/processed \
-  --format "TIFF (16-bit)"
-```
-
-***
-
-### 示例 6：身份验证工作流
-
-完整的身份验证流程（所有平台均相同）：
-
-```bash
-# Step 1: Login
-chloros-cli login user@example.com 'MyP@ssw0rd'
-
-# Step 2: Verify status
-chloros-cli status
-
-# Step 3: Process images
-# Windows: chloros-cli process "C:\Datasets\Field_A"
-# Linux:   chloros-cli process ~/datasets/field_a
-chloros-cli process ~/datasets/field_a
-
-# Step 4: Logout (optional, when switching accounts)
-chloros-cli logout
-```
-
-***
-
-### 示例 7：多语言使用
-
-更改界面语言（所有平台均相同）：
-
-```bash
-# List available languages
-chloros-cli language --list
-
-# Change to Spanish
-chloros-cli language es
-
-# Process with Spanish interface
-# Windows: chloros-cli process "C:\Vuelos\Campo_A"
-# Linux:   chloros-cli process ~/vuelos/campo_a
-chloros-cli process ~/vuelos/campo_a
-
-# Change back to English
-chloros-cli language en
-```
+* **所有标志、所有子命令：** [CLI 参考](reference/cli-reference.md)
+* **Python 的等效命令：** [Python SDK](api-python-sdk.md) 以及 [SDK 参考](reference/sdk-reference.md)
+* **支持：** info@mapir.camera · [https://www.mapir.camera/community/contact](https://www.mapir.camera/community/contact)
