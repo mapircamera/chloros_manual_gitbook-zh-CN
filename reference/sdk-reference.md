@@ -2105,7 +2105,7 @@ for arr in cam.frame_stream(processing="debayered", fps=5, count=100):
 > **反射率DN标度——请勿硬编码。** LATTICE反射率使用 `32768` = ρ 1.0 并标记
 > XMP `Chloros:PixelScale=32768`；Survey3反射率使用 `65535` = ρ 1.0，且不包含
 > `Chloros:*` 标签。读取该标签并以此值进行除法运算。该值定义在 uint16 域中，因此对于所有进行重新缩放的格式（16 位 TIFF、8 位 TIFF、
-> `32768` 8 位 PNG/JPG、32 位百分比） 8位PNG/JPG、32位百分比）
+> 8 位 PNG/JPG、32 位百分比），其值均保持为 `32768`
 > — 首先将存储的数据类型归一化回 uint16（从 8 位乘以 257，从浮点数乘以 65535）。唯一
 > 的例外是 1.3.0 之前版本生成的文件：当时的 8 位 TIFF 会被 *裁剪* 而不是重新缩放，因此
 > 无法用任何比例来描述，且不包含 `PixelScale` 或 MicaSense 元组。对于
