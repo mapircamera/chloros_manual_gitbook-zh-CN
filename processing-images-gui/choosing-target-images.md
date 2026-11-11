@@ -146,7 +146,9 @@
 **最小校准采样区域（像素）：*** **默认值**：25 像素
 * **增大**该值，若在微小伪影上出现误检测
 * **减小**该值，若目标无法被检测到**最小目标聚类值（0-100）：*** **默认值**：60
-* **若目标被拆分为多个检测结果，请** **增加*** **若颜色变化较大的目标未被完全检测到，请** **减少**{% hint style="info" %}**关于 CLI 的提示**：`chloros-cli process` 支持相同的调节参数（`--min-target-size`、 `--target-clustering`），其标志 `--target`/`--targets` 可将整个输入文件夹标记为“仅限目标面板”。 请参阅 [CLI 参考文档](../reference/cli-reference.md)。
+* **若目标被拆分为多个检测结果，请** **增加*** **若颜色变化较大的目标未被完全检测到，请** **减少**
+{% hint style="info" %}
+**关于 CLI 的提示**：`chloros-cli process` 支持相同的调节参数（`--min-target-size`、 `--target-clustering`），其标志 `--target`/`--targets` 可将整个输入文件夹标记为“仅限目标面板”。 请参阅 [CLI 参考文档](../reference/cli-reference.md)。
 {% endhint %}
 
 ***
