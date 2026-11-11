@@ -1,8 +1,6 @@
 # NVIDIA Jetson 指南NVIDIA Jetson 上的
 
-Chloros
-支持在边缘设备上进行多光谱图像处理——无论是在野外、无人机上还是远程安装环境中。Chloros
-1.3.0 会在启动时自动检测您的 Jetson 型号，并根据检测到的硬件优化其处理策略。**无需手动调整。**
+Chloros 支持在边缘设备上进行多光谱图像处理——无论是在野外、无人机上还是远程安装环境中。Chloros 1.3.0 会在启动时自动检测您的 Jetson 型号，并根据检测到的硬件优化其处理策略。**无需手动调整。**
 {% hint style="info" %}
 **
 
@@ -20,8 +18,7 @@ Chloros
 | **Jetson Orin Nano** | 8GB 共享     | `GPU_SINGLE`（1 个工作进程，顺序执行）                     | 入门级边缘计算                                 |
 
 {% hint style="info" %}
-Linux
-arm64 软件包需要 **JetPack 6**，该版本可在 Jetson Orin 系列上使用。较旧的型号（Nano、TX2、Xavier NX）无法运行 JetPack 6，且不受当前软件包支持。
+Linux arm64 软件包需要 **JetPack 6**，该版本可在 Jetson Orin 系列上使用。较旧的型号（Nano、TX2、Xavier NX）无法运行 JetPack 6，且不受当前软件包支持。
 {% endhint %}
 
 ***
@@ -30,10 +27,7 @@ arm64 软件包需要 **JetPack 6**，该版本可在 Jetson Orin 系列上使�
 
 * **JetPack 6.x**（建议使用最新版本）
 * **来自 JetPack 6 的 NVIDIA CUDA 和 cuDNN**（若您的镜像中缺少这些组件，请安装 `sudo apt install nvidia-jetpack`）
-* **付费版 Chloros
-+ 套餐** — 铜级或更高（所有 CLI
-/SDK
-访问均需此条件；服务器端强制执行）
+* **付费版 Chloros+ 套餐** — 铜级或更高（所有 CLI/SDK 访问均需此条件；服务器端强制执行）
 
 ## 安装
 
@@ -50,15 +44,10 @@ python3 -c "import chloros_sdk; print(chloros_sdk.__version__)"   # the .deb ins
 chloros-cli selftest
 ```
 
-`.deb` 会为系统 `python3` 安装与该构建版本匹配的 Python
-SDK
-。 仅当在虚拟环境中使用时，才需将捆绑的 wheel 包安装到该环境中：`pip install /usr/lib/chloros/sdk/chloros_sdk-*.whl`（完全离线）。有关 Linux
-的一般安装细节、文件位置及故障排除，请参阅 [Linux
-安装指南](linux-installation.md)。
+`.deb` 会为系统 `python3` 安装与该构建版本匹配的 Python SDK。 仅当在虚拟环境中使用时，才需将捆绑的 wheel 包安装到该环境中：`pip install /usr/lib/chloros/sdk/chloros_sdk-*.whl`（完全离线）。有关 Linux 的一般安装细节、文件位置及故障排除，请参阅 [Linux 安装指南](linux-installation.md)。
 
 {% hint style="info" %}
-**启动时不再进行解压。** 从 1.3.0 版本开始，后端和 CLI
-已以未解压形式安装在 `/usr/lib/chloros/` 下，因此它们不再在每次启动时自动解压到临时目录中。 如果该文件夹存在，临时文件仍会自动保存到 `/mnt/ssd/tmp`；否则，您可以将 `TMPDIR` 设置为 NVMe 上的路径（`export TMPDIR=/mnt/nvme/tmp`）。
+**启动时不再进行解压。** 从 1.3.0 版本开始，后端和 CLI 已以未解压形式安装在 `/usr/lib/chloros/` 下，因此它们不再在每次启动时自动解压到临时目录中。 如果该文件夹存在，临时文件仍会自动保存到 `/mnt/ssd/tmp`；否则，您可以将 `TMPDIR` 设置为 NVMe 上的路径（`export TMPDIR=/mnt/nvme/tmp`）。
 {% endhint %}
 
 ***
@@ -67,8 +56,7 @@ SDK
 
 ### 工作原理
 
-启动时，Chloros
-会对您的系统进行配置：
+启动时，Chloros 会对您的系统进行配置：
 
 1. 通过 `/proc/device-tree/model` **检测 Jetson 型号**
 
@@ -113,13 +101,10 @@ SDK
 
 ## Nano 和 Orin Nano 上 Texture Aware 的 GPU 频率限制
 
-“纹理感知”去拜耳算法会运行 GPU 神经网络推理，这可能会在低功耗 Jetson 型号（10-15W 级）以全速运行 GPU 时触发 **过流警告**。当您在**Jetson Nano 或 Orin Nano**上运行 `--debayer texture-aware` 时，CLI
-会检查 GPU 的最大频率，若当前频率高于该值，则将其限制为 **510 MHz** (510000000)：
+“纹理感知”去拜耳算法会运行 GPU 神经网络推理，这可能会在低功耗 Jetson 型号（10-15W 级）以全速运行 GPU 时触发 **过流警告**。当您在**Jetson Nano 或 Orin Nano**上运行 `--debayer texture-aware` 时，CLI 会检查 GPU 的最大频率，若当前频率高于该值，则将其限制为 **510 MHz** (510000000)：
 
-* 如果CLI
-能够写入GPU频率的sysfs节点，则限制将**自动应用**，并显示确认信息。
-* 若无法写入（需要 root 权限），CLI
-将显示用于手动设置限制的确切命令 `sudo`，稍作等待以便您阅读，随后继续执行——处理过程仍会运行，但可能会显示过流警告。
+* 如果CLI 能够写入GPU频率的sysfs节点，则限制将**自动应用**，并显示确认信息。
+* 若无法写入（需要 root 权限），CLI 将显示用于手动设置限制的确切命令 `sudo`，稍作等待以便您阅读，随后继续执行——处理过程仍会运行，但可能会显示过流警告。
 
 若要在处理前自行应用限制：
 
@@ -130,20 +115,18 @@ echo 510000000 | sudo tee /sys/devices/platform/bus@0/17000000.gpu/devfreq/17000
 高功耗型号（Orin NX 25W、AGX Orin 60W）以全速运行 GPU；不应用任何限制。标准去拜耳算法在任何型号上均不会触发该限制。
 
 {% hint style="info" %}
-**Jetson 上的“纹理感知”模式始终一次仅处理一张图像。** 每个工作线程都需要独立的 CUDA 上下文（约 1GB）以及独立的去噪模型副本，而统一内存无法满足这一需求——因此在 Jetson 上，“纹理感知”路径被固定到单个工作线程，且 GPU 访问被串行化。预计在任何 Jetson 设备上，“纹理感知”模式的运行速度都将明显慢于“标准”模式。 “纹理感知”模式适用于Survey3
-图像：LATTICE捕获的图像始终采用“标准”去拜耳处理。若无可用的CUDA GPU，运行时将使用“标准”模式，且后端日志中会记录一行`[DEBAYER] … needs a CUDA GPU …`说明原因（如图中所示的`chloros-cli --verbose`）。
+**Jetson 上的“纹理感知”模式始终一次仅处理一张图像。** 每个工作线程都需要独立的 CUDA 上下文（约 1GB）以及独立的去噪模型副本，而统一内存无法满足这一需求——因此在 Jetson 上，“纹理感知”路径被固定到单个工作线程，且 GPU 访问被串行化。预计在任何 Jetson 设备上，“纹理感知”模式的运行速度都将明显慢于“标准”模式。 “纹理感知”模式适用于Survey3 图像：LATTICE捕获的图像始终采用“标准”去拜耳处理。若无可用的CUDA GPU，运行时将使用“标准”模式，且后端日志中会记录一行`[DEBAYER] … needs a CUDA GPU …`说明原因（如图中所示的`chloros-cli --verbose`）。
 {% endhint %}
 
 ***
 
 ## 热管理
 
-Jetson 设备的散热余量有限，尤其是在封闭或机载部署环境中。Chloros
-会监控 SoC 温度并自动调节批处理大小：
+Jetson 设备的散热余量有限，尤其是在封闭或机载部署环境中。Chloros 会监控 SoC 温度并自动调节批处理大小：
 
 | 温度                 | 操作                                            |
 | ------------------- | ------------------------------------------------- |
-| **&lt; 70°C**          | 正常运行 — 全速处理          |
+| **< 70°C**          | 正常运行 — 全速处理          |
 | **70°C** (警告)  | 批处理大小逐步缩减（70°C 至 80°C 区间内从 100% 降至 50%） |
 | **80°C**（危急） | 激进限速（80°C 至 90°C 区间内从 50% 降至 0%） |
 | **90°C**（关机） | 完全停止 GPU 处理 — 需进行降温 |
@@ -160,8 +143,7 @@ Jetson 设备采用 **统一内存** —— GPU 和 CPU 共享同一块物理 RA
 
 ### 交换警告与建议
 
-在 Jetson 上进行处理之前，CLI
-会统计输入文件夹中的 RAW 图像数量 (`.tif`、`.tiff`、`.raw`、`.dng` ——不计入 JPG 预览图），估算运行所需的峰值内存，并**在开始前发出警告**，如果 RAM + 交换空间可能不足。该警告以 `LOW MEMORY WARNING - Jetson Detected` 为标题，显示您的图像数量、 RAM、当前交换空间以及预估峰值，随后提供针对 项目量身定制的精确命令（大小绝不小于 8GB）。系统会暂停几秒钟，以防止消息在滚动记录中丢失，随后继续处理。**警告中使用的内存估算值：**
+在 Jetson 上进行处理之前，CLI 会统计输入文件夹中的 RAW 图像数量 (`.tif`、`.tiff`、`.raw`、`.dng` ——不计入 JPG 预览图），估算运行所需的峰值内存，并**在开始前发出警告**，如果 RAM + 交换空间可能不足。该警告以 `LOW MEMORY WARNING - Jetson Detected` 为标题，显示您的图像数量、 RAM、当前交换空间以及预估峰值，随后提供针对 项目量身定制的精确命令（大小绝不小于 8GB）。系统会暂停几秒钟，以防止消息在滚动记录中丢失，随后继续处理。**警告中使用的内存估算值：**
 
 | 去拜耳模式 | 基础值 | 每张图像 |
 | --- | --- | --- |
@@ -191,8 +173,7 @@ echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
 
 ### OOM（内存不足）处理
 
-在处理过程中，Chloros
-会监控GPU内存，并采取平滑降级措施而非直接崩溃：
+在处理过程中，Chloros 会监控GPU内存，并采取平滑降级措施而非直接崩溃：
 
 1. 当 GPU 内存利用率超过 **85%** 时，会预先减少批处理大小
 2. 若仍发生内存不足事件，批处理大小将 **减半**，且每次连续发生 OOM 时再次减半；此后每次批处理成功执行，该惩罚措施将回退一步
@@ -223,9 +204,7 @@ echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
 ### 通过 SSH
 进行无头操作
 
-Chloros
-CLI
-非常适合无头 Jetson 部署：
+Chloros CLI 非常适合无头 Jetson 部署：
 
 ```bash
 # SSH into the Jetson
@@ -240,16 +219,14 @@ chloros-cli export-status
 
 ### LATTICE / DAQ-E 时间同步的常驻后端
 
-如果您的 Jetson 以无头模式控制 LATTICE 相机或 DAQ-E 光传感器，请以 **您的用户身份** 启用后端 systemd 服务，以便 PTP 主时钟持续运行，且 SDK
-脚本能检测到正在运行的后端（该组件已安装，但默认未启用）：
+如果您的 Jetson 以无头模式控制 LATTICE 相机或 DAQ-E 光传感器，请以 **您的用户身份** 启用后端 systemd 服务，以便 PTP 主时钟持续运行，且 SDK 脚本能检测到正在运行的后端（该组件已安装，但默认未启用）：
 
 ```bash
 sudo systemctl enable --now chloros-backend@$USER.service    # $USER expands to your user name
 chloros-cli time-sync status
 ```
 
-此时后端将以您的身份运行：它写入的捕获数据属于您，并且使用您的 `chloros-cli login`。 详情请参阅 [Linux
-安装指南](linux-installation.md#always-on-ptp-for-headless-hosts)，其中包括 root 权限的 `chloros-backend.service` 以及该软件包如何在无需 root 权限的情况下使 PTP 端口 319/320 可绑定。
+此时后端将以您的身份运行：它写入的捕获数据属于您，并且使用您的 `chloros-cli login`。 详情请参阅 [Linux 安装指南](linux-installation.md#always-on-ptp-for-headless-hosts)，其中包括 root 权限的 `chloros-backend.service` 以及该软件包如何在无需 root 权限的情况下使 PTP 端口 319/320 可绑定。
 
 ### 通过 systemd 实现自动化处理
 
@@ -309,8 +286,7 @@ chloros-cli process /data/flights/flight_042 \
     --indices NDVI GNDVI OSAVI
 ```
 
-### Jetson 上的 Python
-SDK
+### Jetson 上的 Python SDK
 
 
 ```python
@@ -355,26 +331,15 @@ done
 * **坚固型野外应用**：配备 IP67/IP69K 防水外壳，支持 PoE GigE 摄像头连接
 * **精简/经济型**：配备扩展外壳的开发套件
 
-如需针对您的部署场景获取具体的硬件建议，请联系 [MAPIR
-支持团队](https://www.mapir.camera/community/contact)。
+如需针对您的部署场景获取具体的硬件建议，请联系 [MAPIR 支持团队](https://www.mapir.camera/community/contact)。
 
 ***
 
 ## 后续步骤
 
-* [Linux
-安装](linux-installation.md) — Linux
-安装的通用说明
+* [Linux 安装](linux-installation.md) — Linux 安装的通用说明
 * [动态计算适配](../processing-architecture/dynamic-compute-adaptation.md) — 完整的计算策略参考
 * [处理管道](../processing-architecture/processing-pipeline.md) — 了解 4 线程管道
-* [CLI：命令行](../CLI.md) — CLI
-指南
-* [API
-：Python
-SDK
-](../api-python-sdk.md) — SDK
-指南
-* [CLI
-参考](../reference/cli-reference.md) 和 [SDK
-参考](../reference/sdk-reference.md) — 1.3.0 版本的完整命令/API
-列表
+* [CLI：命令行](../CLI.md) — CLI 指南
+* [API：Python SDK](../api-python-sdk.md) — SDK 指南
+* [CLI 参考](../reference/cli-reference.md) 和 [SDK 参考](../reference/sdk-reference.md) — 1.3.0 版本的完整命令/API 列表

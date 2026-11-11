@@ -102,7 +102,7 @@
 - `CHLOROS_BACKEND_URL=<url>` 将 **`lattice`**、**`project`**和**`daq pool-*`** 命令族指向另一个后端（`lattice network-analysis` 则指向 `--backend-url`）。核心命令会刻意锁定 `http://127.0.0.1:<port>` 并忽略它 （IPv4 字面量可避免 Windows 中 `localhost`→`::1` 导致的每次请求约 2 秒的性能开销）。参见 [环境变量](#environment-variables)。
 - **相对路径将以运行 `chloros-cli` 的文件夹为基准进行解析。** 后端进程负责打开输入和输出文件夹，因此在发送路径之前，CLI 会将其转换为绝对路径： `-o` / `--output`（包括其默认值 `output`）、`--input`、 `--burst-dir`、`--profile`、`--save` 和 `--mask`，以及 [配方](#recipe-dsl) 步骤中的 `output`（默认值为 `output`），以及 `lattice index --live` 的默认 `output` 文件夹。因此，`-o captures/` 会写入 `<current folder>/captures/`，且打印出的路径均为绝对路径。 `~` 会被展开。对于远程后端（`CHLOROS_BACKEND_URL` 指代另一台机器），路径将按输入形式发送，并在该机器上解析。
 - 所有 SDK/CLI 调用均需使用 Chloros+ 账户登录 调用均需使用 Chloros+ 账户登录（每台机器运行一次 `chloros-cli login`；结果缓存于 `~/.chloros/` 中）。
-- 示例使用Linux路径；在Windows上，请将 `/home/user/...` 替换为 `C:/Users/.../...`。DAQ-U&#x27;的串口在 Windows 上采用 `COM3` 格式，在 Linux 上采用 `/dev/ttyUSB0` / `/dev/ttyACM0` 格式。
+- 示例使用Linux路径；在Windows上，请将 `/home/user/...` 替换为 `C:/Users/.../...`。DAQ-U'的串口在 Windows 上采用 `COM3` 格式，在 Linux 上采用 `/dev/ttyUSB0` / `/dev/ttyACM0` 格式。
 - 语法概述中，互斥标志写为 `{--a | --b}` 表示互斥标志，可选标志则用 `[...]` 表示。
 
 ---
@@ -491,12 +491,11 @@ ndvi = lo + raw.astype(np.float64) / np.iinfo(raw.dtype).max * (hi - lo)
 拼接问题和BigTIFF问题。如果您的正射影像生成的比例尺
 不合常理， 请先对导出的产品运行 `exiftool -FocalLength` 命令。
 
-此副本特意**未**使用 `-all:all`：IFD0&#x27;的结构标签在
+此副本特意**未**使用 `-all:all`：IFD0'的结构标签在
 复制时会破坏 LATTICE 的输出结果；而 `ExifImageWidth` / `ExifImageHeight` 被排除在外，因为它们描述的是
 *源*图像——否则，任何曾被调整过尺寸的导出文件都会携带与
 与自身栅格相矛盾。XMP是直接写入而非复制，因为当XMP块被复制时，ExifTool
-会丢弃同一调用中的XMP标签（这将导致MAPIR
-校准标签丢失）。
+会丢弃同一调用中的XMP标签（这将导致MAPIR 校准标签丢失）。
 
 ### 输出文件的存储位置
 
@@ -1026,7 +1025,7 @@ chloros-cli lattice index --live --profile align.json --preset NDVI \
 - **`--input`：仅适用于文件无法响应的符号。** 若省略某个符号，则采用文件中名称以此符号开头的那个波段： `red` 会采用 `Red_660` 或 `Red_660_RGN`，`nir` 会采用 `NIR_850`。 这些名称来自文件本身：栈自身的波段列表，或者， 在Chloros辐射度/反射率捕获数据或`process`产品中，其`Chloros:Band{R,G,B}Name`/`XMP-Camera:BandName`标签。因此，`lattice index --input <reflectance capture> --preset NDVI`无需 `--channel`。
 - **两个对应同一符号的波段不会被推测出来**（9相机堆栈中有两个NIR波段）： 请为该波段命名。若某个符号没有对应的波段，则使用 `channel_map missing entries` 拒绝该符号，并退出 `1`。**堆栈中的波段名称**包含相机的滤光片信息：M3C相机的波段为 `<band>_<filter>` — `NIR_850_RGN`、`Green_550_RGN`、 RGN上的`Red_660_RGN`；`NIR_808_OCN`、`Cyan_490_OCN`、 `Orange_615_OCN`位于OCN上；`Blue_475_RGB`、`Green_550_RGB`、`Red_625_RGB`位于RGB上；`Blue_475_NGB`、`Green_550_NGB`、`NIR_850_NGB`位于NGB上——而M3M相机的的单波段为 `Mono_<filter>`（`Mono_660`、`Mono_850`）。`lattice align-info --profile PATH` 列出了配置文件的波段。
 
-完整标志集：`--input PATH | --live --profile PATH`、`--preset NAME`（NDVI/NDRE/EVI/SAVI/GNDVI/…）， `--formula EXPR`、`--channel SYM=BAND`（可重复）、`--capture-level raw|debayered|radiance|reflectance|unknown`（覆盖源TIFF文件中记录的捕获级别；默认： 从TIFF元数据中读取，若未找到则回退至Chloros文件的`Chloros:ProcessingLevel`，因此反射率采集报告的值为`reflectance`），`--output PATH` / `-o`（离线模式下：一个路径；若带图像扩展名，文件名将基于其根目录 ——`-o ndvi_FRGN.png`会写入`ndvi_FRGN.tif`和`ndvi_FRGN_LUT.png`——若无扩展名，则作为前缀，如`-o ndvi` -&gt; `ndvi.tif`、`ndvi_LUT.png`；若未指定，则默认位于输入文件旁， 如 `<input name>_<preset>`；若包含 `--live` 且不包含 `-o`，则会在执行命令的文件夹下生成一个名为 `output/` 的文件夹）， `--output-format all|raw|tif|colorized|lut|png`、`--gradient NAME|JSON`、`--vmin/--vmax/--percentile LO,HI`、 `--bg-mode clip|transparent|indexColor|backgroundColor`、`--colorize`、`--list-presets`、 `--list-gradients`。对于 `--live`，对齐变形旋钮同样适用：`--save-multiband`、`--gpu/--no-gpu`、`--no-crop`、 `--bit-depth 8|12|16`、`--vignette`、`--interpolation nearest|linear|cubic|lanczos`、`--border-mode constant|replicate|reflect|wrap`、`--border-value N`、 `--brightness N`（摄像机的自动曝光目标，参见瞬态规则），`--serials SN1,SN2,…`。`--live` 打开一个 [瞬态数组]（#多摄像头瞬态会话）：若某摄像头未传输任何帧，则运行失败（退出 `1`，并命名该摄像头），且不会写入栈或索引。它会打开 `--serials`（第一个触发器），否则则依次处理配置文件中 `layer_order` 条目已启用的相机，优先处理其参考相机——即使该参考相机的波段被禁用，因为其他相机已与 该相机，且由其触发）。禁用波段的相机永远不会被校准，因此配置文件中禁用的RGB相机将不再导致反射率索引（`no-absolute-radiance-scale`）失败。未指定任何相机的配置文件将像以前一样打开网络上的所有相机。
+完整标志集：`--input PATH | --live --profile PATH`、`--preset NAME`（NDVI/NDRE/EVI/SAVI/GNDVI/…）， `--formula EXPR`、`--channel SYM=BAND`（可重复）、`--capture-level raw|debayered|radiance|reflectance|unknown`（覆盖源TIFF文件中记录的捕获级别；默认： 从TIFF元数据中读取，若未找到则回退至Chloros文件的`Chloros:ProcessingLevel`，因此反射率采集报告的值为`reflectance`），`--output PATH` / `-o`（离线模式下：一个路径；若带图像扩展名，文件名将基于其根目录 ——`-o ndvi_FRGN.png`会写入`ndvi_FRGN.tif`和`ndvi_FRGN_LUT.png`——若无扩展名，则作为前缀，如`-o ndvi` -> `ndvi.tif`、`ndvi_LUT.png`；若未指定，则默认位于输入文件旁， 如 `<input name>_<preset>`；若包含 `--live` 且不包含 `-o`，则会在执行命令的文件夹下生成一个名为 `output/` 的文件夹）， `--output-format all|raw|tif|colorized|lut|png`、`--gradient NAME|JSON`、`--vmin/--vmax/--percentile LO,HI`、 `--bg-mode clip|transparent|indexColor|backgroundColor`、`--colorize`、`--list-presets`、 `--list-gradients`。对于 `--live`，对齐变形旋钮同样适用：`--save-multiband`、`--gpu/--no-gpu`、`--no-crop`、 `--bit-depth 8|12|16`、`--vignette`、`--interpolation nearest|linear|cubic|lanczos`、`--border-mode constant|replicate|reflect|wrap`、`--border-value N`、 `--brightness N`（摄像机的自动曝光目标，参见瞬态规则），`--serials SN1,SN2,…`。`--live` 打开一个 [瞬态数组]（#多摄像头瞬态会话）：若某摄像头未传输任何帧，则运行失败（退出 `1`，并命名该摄像头），且不会写入栈或索引。它会打开 `--serials`（第一个触发器），否则则依次处理配置文件中 `layer_order` 条目已启用的相机，优先处理其参考相机——即使该参考相机的波段被禁用，因为其他相机已与 该相机，且由其触发）。禁用波段的相机永远不会被校准，因此配置文件中禁用的RGB相机将不再导致反射率索引（`no-absolute-radiance-scale`）失败。未指定任何相机的配置文件将像以前一样打开网络上的所有相机。
 
 所有表单都在后端运行，因此后端必须处于运行状态： 请通过 Chloros GUI 启动它，或使用 CLI 在无法连接时输出的命令。在脱机状态下，后端会读取 `--input`，并自行写入浮点 TIFF 和着色 PNG 文件，因此相对路径 `--input` 或 `-o` 文件名将根据您执行命令的文件夹路径进行解析（参见 [约定](#conventions)）。 这两种离线生成文件均包含输入文件的相机记录，与 `process` 索引导出格式一致：品牌/型号/序列号、GPS 信息、镜头标签、拍摄时间（即输入文件自身的拍摄时间；当其 EXIF 信息中未包含该字段时，则采用其记录的曝光瞬间或文件名中的时间戳， 以UTC为单位）以及MAPIR校准标识——绝非raw-DN校准，因为后者不适用于索引——此外还包含`Chloros:ProcessingLevel=index`和索引表达式；浮点数TIFF标识一个波段，即预设。 `--list-presets` 和 `--list-gradients` 会输出后端的预设表和渐变表。 如果后端拒绝某个公式，或者TIFF文件中不存在某个 `--channel` 波段，则会以后端给出的原因退出 `1`。
 
@@ -1117,7 +1116,7 @@ output/
 - `on` 始终对 12 位格式进行打包。
 
 connect 输出将显示决策结果及原因（`打包 12 位：开启 (自动：
-预计 11.0 -&gt; 14.4 fps，…))`); `/api/camera/array/status` 报告
+预计 11.0 -> 14.4 fps，…))`); `/api/camera/array/status` 报告
 `packed_transport` 和 `packed_decision`。若要设置全机默认值
 而非每次都传递该标志，请在后端环境中设置 `CHLOROS_ARRAY_PACKED12=off` （或
 `on`）——但显式设置的 `--packed on|off` 仍具有优先级。
@@ -1362,7 +1361,7 @@ output/
 
 ### 与曝光值相距甚远的DAQ读数
 
-每次捕获保存的每个`.daq`值都是与该曝光值匹配的DAQ读数，而旁边的`.match.json`则记录了两者之间的偏差 (`gap_ms`)，以及该偏差是否在容差范围内（`in_tolerance`，默认500毫秒，除非捕获集另行设置`--daq-tolerance-ms`）。 超出容差范围的读数仍会被采用，因此不会丢失任何帧，并且会进行标记：反射率文件的XMP中包含`DlsInTolerance=False`和`DlsMatchGapS`。 `lattice capture`、`multi-capture` 和 `array-capture` 也会在相关的 `.daq` 下打印该信息，并附带 DAQ&#x27;流故障：
+每次捕获保存的每个`.daq`值都是与该曝光值匹配的DAQ读数，而旁边的`.match.json`则记录了两者之间的偏差 (`gap_ms`)，以及该偏差是否在容差范围内（`in_tolerance`，默认500毫秒，除非捕获集另行设置`--daq-tolerance-ms`）。 超出容差范围的读数仍会被采用，因此不会丢失任何帧，并且会进行标记：反射率文件的XMP中包含`DlsInTolerance=False`和`DlsMatchGapS`。 `lattice capture`、`multi-capture` 和 `array-capture` 也会在相关的 `.daq` 下打印该信息，并附带 DAQ'流故障：
 
 **读数如何与曝光时间匹配。** 捕获操作会等待曝光结束后DAQ的首次读数，以便融合该读数前后两侧的读数（`method` `interpolated`）。DAQ-E在日光下每0.4秒发送一次读数，在室内每1-2秒发送一次，因此等待时间会使命令的总时长增加约一个半这样的间隔，而非曝光时间。如果DAQ停止发送数据，则不会等待。DAQ-E 的读数是自上次读数以来该时间间隔内光照的平均值，因此被放置在该时间间隔的中点：`gap_ms`是从曝光开始到该中点的测量值，而`bracket_stamps_ns`则给出读数本身的时间戳。 `array-capture --continuous` 在不影响捕获速度的情况下进行等待：其原始文件会立即写入，而 `.daq` 则在读数到达后生成。 对于 `--interval`，每次循环的等待方式与单次采集相同。
 
@@ -1615,12 +1614,9 @@ Get-NetAdapterAdvancedProperty  -Name "Ethernet 5" -RegistryKeyword ReceiveBuffe
 
 > **`lattice network --fix` 适用于 USB 10GbE 适配器。**现在它会检测适配器类型并调整正确的接收环关键字：对于 PCIe 网卡（Intel I219、 等），或 `ReceiveBufferLen`→256 + `PendingReceives`→64 用于 Realtek**USB** 10GbE 控制器（该控制器不暴露 `*ReceiveBuffers`）。目标值会被限制在各驱动程序报告的最大值（`NumericParameterMaxValue`）内，因此绝不会写入超出范围的值。 请在**提升权限**的终端中运行该命令；与任何基于注册表的调整一样，该更改需在网卡重启或系统重启后生效。上述手动 `Set-NetAdapterAdvancedProperty` 命令仍是一个不错的替代方案——它们无需重启即可实时生效（重新绑定网卡）。
 
-### Linux
-主机 — 套接字接收缓冲区
+### Linux 主机 — 套接字接收缓冲区
 
-在 Linux
-系统（包括 NVIDIA Jetson）上，内核的套接字接收缓冲区与网卡的接收环同样重要。 在内核默认设置下（`net.core.rmem_max` / `net.core.rmem_default` = 212,992 字节），摄像头发出的 GVSP 数据包突发会使流套接字溢出，而此时 Chloros
-尚未读取这些数据包。 这些数据包在内核中被丢弃，而网卡本身却报告没有丢包，导致相机阵列丢失帧组并降低帧率。 在连接 USB 10 GbE 适配器的 4 台摄像头阵列上进行测试，将两项参数均提高至 32 MB 后，阵列在连接后的帧率从 4.96 fps 提升至 7.52 fps，连续原始捕获速率从 4.7 帧/秒提升至 7.6 帧/秒，且内核中未丢包。
+在 Linux 系统（包括 NVIDIA Jetson）上，内核的套接字接收缓冲区与网卡的接收环同样重要。 在内核默认设置下（`net.core.rmem_max` / `net.core.rmem_default` = 212,992 字节），摄像头发出的 GVSP 数据包突发会使流套接字溢出，而此时 Chloros 尚未读取这些数据包。 这些数据包在内核中被丢弃，而网卡本身却报告没有丢包，导致相机阵列丢失帧组并降低帧率。 在连接 USB 10 GbE 适配器的 4 台摄像头阵列上进行测试，将两项参数均提高至 32 MB 后，阵列在连接后的帧率从 4.96 fps 提升至 7.52 fps，连续原始捕获速率从 4.7 帧/秒提升至 7.6 帧/秒，且内核中未丢包。
 
 - **.deb 包会设置这些参数。** 安装该软件包会写入 `/etc/sysctl.d/60-chloros-gige.conf`（两者均位于 `33554432`）并立即应用。 若该值已被设置为更高，则保持原值不变。
 - **`lattice network` 负责检查这些设置。** 当任一值较低时，系统会在 *发现的问题* 下列出 `socket receive buffers too small for GigE Vision (…)`，且后端日志会在第一台摄像头或阵列连接时记录相同的警告。
@@ -1642,23 +1638,14 @@ Get-NetAdapterAdvancedProperty  -Name "Ethernet 5" -RegistryKeyword ReceiveBuffe
 
 ### 阵列帧率与突发模型
 
-如何解读“阵列设置”面板（以及 `lattice analyze-array` / SDK
-中的 `analyze_array_network`）：
+如何解读“阵列设置”面板（以及 `lattice analyze-array` / SDK 中的 `analyze_array_network`）：
 
 - **突发速率按每台摄像机的实际像素格式进行累加。**单色**M3M**摄像机以**Mono12（2 B/px）**格式流式传输，或通过 `--pixel-format` 采用其深度信息的单色格式 （`BayerRG8` 即 `Mono8`， 1 B/px）；**M3C**拜耳相机输出 8 位或 12 位数据（即使请求的是 BayerRG8，M3C 固件也会默认输出 BayerRG12）。因此，4 台摄像头的全分辨率帧大小为**若均为 8 位则约为 12.6 MB，但若其中三台为 12 位单色摄像头则约为 25 MB**。 该投影功能会根据相机型号（身份缓存）解析每台相机的格式，因此数据流与实际传输内容相符——而非默认采用“一刀切”的 BayerRG8 格式。
-- **USB 以太网适配器的传输速率上限为 200 MB/s，无论其标称参数如何。** 将链路速率转换为持续传输速率的效率表源自 PCIe；USB 网卡虽宣传其 *以太网* 链路速率，但实际受限于 USB 总线及其驱动程序。一款 USB 10GbE 适配器曾测得约 1063 MB/s “持续”速率——该数值从未经过实际测试——而由此产生的速率调节导致 6–18% 的帧数据受损，同时仍报告正常的帧率目标值。目前，USB 连接的网卡已设定绝对上限：在 Windows
-和 NVIDIA Jetson 平台上为 **200 MB/s**， 在 Linux
-x86_64 系统上为 **400 MB/s**（在 Linux
-系统中，连接至 USB 2.0 端口的适配器配额为 **30 MB/s**，且能力记录提示应将其插入 USB 3.0 端口） （该限制由主机的 USB 总线和驱动程序决定，因此不会随标称速率线性提升；USB 1 GbE 适配器可达到约 80 MB/s，且不受此限制）。在Linux
-系统中，该适配器可通过sysfs识别（若无法识别则回退至`ethtool -i`的`bus-info`）。各项数据均经实测：在Windows
-系统上，同一套4摄像头阵列在传输速率超过200 MB/s时，6–10 %的帧会出现数据损坏；在Linux
-x86_64系统上，同一网卡在高达480 MB/s的任何速率下均运行稳定（实际传输速率为273 MB/s，即摄像头自身的上限）。在 NVIDIA Jetson 上，同一适配器仅在 200 MB/s 时无帧丢失，超过该速率后会间歇性丢失帧。能力记录中的 `wire_ceiling_source` 以文字形式说明了这一点，而 `nic_is_usb` 则通过标志进行了标注。可通过 `--wire-ceiling-mbps` 即可。
-- **通量控制机制基于引脚负载，而非“整批数据”与“环形缓冲区”的对比。** 同时发生的突发传输只需满足 *瞬态积压* = `max(0, Σ per-cam arrival − host drain) × emit_window` 的要求，而非整个突发传输。在高速主机/低速摄像头架构（例如 **PCIe**10G 主机 + 4× 1 GbE CAM：到达速率 ≈ 320 MB/s，排出速率 ≈ 1063 MB/s）的架构中，主机的排空速度快于摄像头的填充速度，积压量 ≈ 0，因此全分辨率模拟发射会**被允许**，尽管 25 MB 的突发数据量超过了 13.5 MB 的环带容量。 若将这四台摄像头连接到Windows
-系统上的**USB**10GbE适配器后，数据排出速率为200 MB/s，而非1063 —— 数据到达速率超过了该速率，且数据丢失表现为帧损坏，而非帧率降低。 在 1 GbE 主机上，摄像头 31.25 MB/s 的 DLThr 下限导致数据到达速度超过数据吞吐速度 → 系统会正确地**阻塞**（对于 *此类* 阻塞情况，应缩小 ROI 或使用 ≥ 2 的像素合并）。 允许通过是**两个**连接门之一——另一个是下文提到的聚合超订阅检查。
+- **USB 以太网适配器的传输速率上限为 200 MB/s，无论其标称参数如何。** 将链路速率转换为持续传输速率的效率表源自 PCIe；USB 网卡虽宣传其 *以太网* 链路速率，但实际受限于 USB 总线及其驱动程序。一款 USB 10GbE 适配器曾测得约 1063 MB/s “持续”速率——该数值从未经过实际测试——而由此产生的速率调节导致 6–18% 的帧数据受损，同时仍报告正常的帧率目标值。目前，USB 连接的网卡已设定绝对上限：在 Windows 和 NVIDIA Jetson 平台上为 **200 MB/s**， 在 Linux x86_64 系统上为 **400 MB/s**（在 Linux 系统中，连接至 USB 2.0 端口的适配器配额为 **30 MB/s**，且能力记录提示应将其插入 USB 3.0 端口） （该限制由主机的 USB 总线和驱动程序决定，因此不会随标称速率线性提升；USB 1 GbE 适配器可达到约 80 MB/s，且不受此限制）。在Linux 系统中，该适配器可通过sysfs识别（若无法识别则回退至`ethtool -i`的`bus-info`）。各项数据均经实测：在Windows 系统上，同一套4摄像头阵列在传输速率超过200 MB/s时，6–10 %的帧会出现数据损坏；在Linux x86_64系统上，同一网卡在高达480 MB/s的任何速率下均运行稳定（实际传输速率为273 MB/s，即摄像头自身的上限）。在 NVIDIA Jetson 上，同一适配器仅在 200 MB/s 时无帧丢失，超过该速率后会间歇性丢失帧。能力记录中的 `wire_ceiling_source` 以文字形式说明了这一点，而 `nic_is_usb` 则通过标志进行了标注。可通过 `--wire-ceiling-mbps` 即可。
+- **通量控制机制基于引脚负载，而非“整批数据”与“环形缓冲区”的对比。** 同时发生的突发传输只需满足 *瞬态积压* = `max(0, Σ per-cam arrival − host drain) × emit_window` 的要求，而非整个突发传输。在高速主机/低速摄像头架构（例如 **PCIe**10G 主机 + 4× 1 GbE CAM：到达速率 ≈ 320 MB/s，排出速率 ≈ 1063 MB/s）的架构中，主机的排空速度快于摄像头的填充速度，积压量 ≈ 0，因此全分辨率模拟发射会**被允许**，尽管 25 MB 的突发数据量超过了 13.5 MB 的环带容量。 若将这四台摄像头连接到Windows 系统上的**USB**10GbE适配器后，数据排出速率为200 MB/s，而非1063 —— 数据到达速率超过了该速率，且数据丢失表现为帧损坏，而非帧率降低。 在 1 GbE 主机上，摄像头 31.25 MB/s 的 DLThr 下限导致数据到达速度超过数据吞吐速度 → 系统会正确地**阻塞**（对于 *此类* 阻塞情况，应缩小 ROI 或使用 ≥ 2 的像素合并）。 允许通过是**两个**连接门之一——另一个是下文提到的聚合超订阅检查。
 - **预计帧率取决于最慢摄像头的周期。**在同时发射模式下，每台摄像头都会在同一时间发送其帧，因此数组的周期取决于其最慢成员的传感器读出时间与发射时间中的较长者（帧字节数 ÷ 其发射速率：即摄像头的**访问链路**，1 GbE ≈ 80 MB/s，或当该值更小时，其占主机带宽上限的份额）。每次曝光都会与前一帧的读出时间重叠，因此曝光过程不计入周期： 自动曝光会填满由传输速率决定的周期，随后提高增益，且昏暗场景不再降低传输速率（在 1.2.0 版本中会降低）。只有手动曝光时间超过该周期时，才会减慢触发速度（参见 [数组成员上的曝光](#exposure-on-an-array-member))。增加相机数量不会降低数组的运行速度，除非其总线共享带宽缩小。在串行发射模式（`slip-emit-and-capture`）中，各相机的发射时间会累加，且每个成员的曝光时间都会计入时序错开中。 在 9 台摄像机阵列上，使用 PCIe 10 GbE 主机，以全传感器、12 位模式测得：10.7 fps，若采用 [打包传输](#packed-12-bit-transport---packed)，则为 14.0 fps。
 - **连续捕获结束后，投影数据会显示其最终稳定帧率。** 30 秒或更长时间的自动帧率捕获会记录该阵列规模下本计算机最终稳定的帧率；帧率控制器对更高帧率进行的短暂测试则不被计入。 此后，当实际速率低于模型预测值时，`array-connect` 的行以及“数组设置”面板会显示该速率，并注明限制因素：`clock-bound`（数组以最终稳定的速率运行， 抓取循环正在等待其触发时钟），`loop-bound`（抓取循环已无剩余时间），`capture-bound`（捕获操作滞后并跳过了若干组）或 `measured` （未明确指出具体原因）。该模型的数据见 `wire_fps_max`。数组仍会攀升至线路所能承载的上限。
-- **数组可在任何网络上运行——帧率才是决定因素。**每台相机都能平分**防冲突带宽上限**（`sustained × sim_emit_factor`），其速率由 GevSCPD 控制，且所有相机仍能响应同一触发信号。 在低速网络上，分配份额较小，帧率也会随之下降：8台全分辨率12位相机在未启用巨型帧的1 GbE网络上，每台可获得52 / 8 = 6.5 MB/s，约为**1 fps**（压缩后约1.3帧/秒），而10G主机运行时帧率为11-14帧/秒。如果无法以如此低的速率同步相机——可通过读取每台相机的GevSCPD范围来确认——则数组将切换为**串行**输出 (`slip-emit-and-capture`)：相机将以全链路速率轮流使用总线，依次触发，因此每个帧仍会到达，但成员数据**不会同时暴露**。 `analyze-array` 以及 connect 命令的输出结果会标明该模式；将 `--force-tier sim-capture-sim-emit` 引脚置为低电平可拒绝此降级机制。帧大小不影响此共享机制，因此**像素合并和缩小 ROI 虽能提高帧率，但不会改变数组是否适配**。 只有当一条线缆甚至无法以串行方式传输数组时，才会出现**超额订阅**——例如，摄像头数量远超一条线缆的处理能力，或者该线缆上同时传输的摄像头过多——此时的症状是 GVSP 数据包丢失，而非速率降低： `analyze-array` 将可实现的帧率值清零并输出 `**OVER-SUBSCRIBED**`，连接仍会继续进行但伴随强烈警告；而带有 `pin_resolution: true`（严格模式）的 HTTP
-连接则会 **被拒绝**。解决方法包括减少摄像头数量、端到端启用巨型帧，或使用更快的网卡。`CHLOROS_ARRAY_ALLOW_OVERSUBSCRIBED=1`会将拒绝降级为“强烈警告”，以便进行基准测试——参见[环境变量](#environment-variables)。
+- **数组可在任何网络上运行——帧率才是决定因素。**每台相机都能平分**防冲突带宽上限**（`sustained × sim_emit_factor`），其速率由 GevSCPD 控制，且所有相机仍能响应同一触发信号。 在低速网络上，分配份额较小，帧率也会随之下降：8台全分辨率12位相机在未启用巨型帧的1 GbE网络上，每台可获得52 / 8 = 6.5 MB/s，约为**1 fps**（压缩后约1.3帧/秒），而10G主机运行时帧率为11-14帧/秒。如果无法以如此低的速率同步相机——可通过读取每台相机的GevSCPD范围来确认——则数组将切换为**串行**输出 (`slip-emit-and-capture`)：相机将以全链路速率轮流使用总线，依次触发，因此每个帧仍会到达，但成员数据**不会同时暴露**。 `analyze-array` 以及 connect 命令的输出结果会标明该模式；将 `--force-tier sim-capture-sim-emit` 引脚置为低电平可拒绝此降级机制。帧大小不影响此共享机制，因此**像素合并和缩小 ROI 虽能提高帧率，但不会改变数组是否适配**。 只有当一条线缆甚至无法以串行方式传输数组时，才会出现**超额订阅**——例如，摄像头数量远超一条线缆的处理能力，或者该线缆上同时传输的摄像头过多——此时的症状是 GVSP 数据包丢失，而非速率降低： `analyze-array` 将可实现的帧率值清零并输出 `**OVER-SUBSCRIBED**`，连接仍会继续进行但伴随强烈警告；而带有 `pin_resolution: true`（严格模式）的 HTTP 连接则会 **被拒绝**。解决方法包括减少摄像头数量、端到端启用巨型帧，或使用更快的网卡。`CHLOROS_ARRAY_ALLOW_OVERSUBSCRIBED=1`会将拒绝降级为“强烈警告”，以便进行基准测试——参见[环境变量](#environment-variables)。
 
 ### 阵列健康状况 — 哪个子系统正在丢失帧
 
@@ -1687,8 +1674,7 @@ x86_64系统上，同一网卡在高达480 MB/s的任何速率下均运行稳定
 | 字段 | 含义 |
 | --- | --- |
 | `wire_ceiling_mbps` | 主机当前生效的持续带宽配额，MB/s。 |
-| `wire_ceiling_source` | 该数值来源的文字说明——例如 `USB-capped 200 MB/s (was theoretical 1062; PnPDeviceID=USB\VID_0BDA&PID_815A)` （在 Linux
-x86_64 系统上，为 `USB-capped 400 MB/s (…; sysfs: bus=usb (usb2/2-1/2-1:1.0))`）或 `user override 120 MB/s (auto said 200)`。 |
+| `wire_ceiling_source` | 该数值来源的文字说明——例如 `USB-capped 200 MB/s (was theoretical 1062; PnPDeviceID=USB\VID_0BDA&PID_815A)` （在 Linux x86_64 系统上，为 `USB-capped 400 MB/s (…; sysfs: bus=usb (usb2/2-1/2-1:1.0))`）或 `user override 120 MB/s (auto said 200)`。 |
 | `wire_ceiling_is_user_set` | 当 `--wire-ceiling-mbps`（或 GUI 中的 **带宽预算** 字段）将其设置为 `true` 时。 |
 | `nic_is_usb` | 对于 USB 以太网适配器，该值为 `true` —— 参见上文的 USB 限制。 |
 
@@ -1716,9 +1702,7 @@ x86_64 系统上，为 `USB-capped 400 MB/s (…; sysfs: bus=usb (usb2/2-1/2-1:1
 | 重启/关机卡死；随后出现 `Invalid class` WMI 错误， 网卡无法启用，USB 设备缺失 | 旧版 2016 Realtek USB 10GbE 驱动程序 → 蓝屏 `0x9F` → 强制关机 | 将适配器驱动程序更新至 ≥ v10.67 (2026)，然后重新应用上述接收环设置 |
 | 阵列以满传感器速率连接但帧率较低 | “自动”模式可保持满传感器速率，并让帧率降至线速 | 选择“连接输出”列表中较快的选项之一（`--binning 2` / `4`，或较小的 `--width`/`--height`），启用巨型帧，或升级链路 |
 | Array 报告的目标帧率正常，但实际传输仅为其一部分；`health.gvsp_corrupt_rate_pct` 不为零， `never_arrived_rate_pct` 0 | 主机推断的线速预算高于其实际可持续传输速率（常见于 USB 以太网适配器、带宽较窄的 PCIe 通道或共享互连结构） | 请使用较低的 `--wire-ceiling-mbps` 值重新连接，并再次检查健康状态块。 **非** `--target-fps` — GevSCPD 速率控制在连接时已固定 |
-| Linux
-：数组丢失帧组并降低帧率，而网卡报告无丢包； `lattice network` 列出 `socket receive buffers too small` | 内核的套接字接收缓冲区处于默认大小，因此相机数据包在内核中被丢弃 | 将 `net.core.rmem_max` / `rmem_default` 至 32 MB — 参见 [Linux
-主机](#linux-hosts--socket-receive-buffers)。.deb 包会在安装时自动完成此操作 |
+| Linux：数组丢失帧组并降低帧率，而网卡报告无丢包； `lattice network` 列出 `socket receive buffers too small` | 内核的套接字接收缓冲区处于默认大小，因此相机数据包在内核中被丢弃 | 将 `net.core.rmem_max` / `rmem_default` 至 32 MB — 参见 [Linux 主机](#linux-hosts--socket-receive-buffers)。.deb 包会在安装时自动完成此操作 |
 | 已发布组中缺少摄像头；`health.never_arrived_rate_pct` 不为零， `gvsp_corrupt_rate_pct` 为 0 | 触发/同步路径问题——摄像头未启动，非网络问题 | 检查 M8 同步线缆和 `--line`；确认每个成员均已启用 (`TriggerMode=On`) |
 | `**OVER-SUBSCRIBED**` / `Wire budget` 在 `analyze-array` 中超限，或在严格模式下连接被拒绝 (`pin_resolution`; `array over-subscribes the wire`) | 无论摄像头达到何种传输速率，该线路均无法同时或依次承载该数组——摄像头数量远超线路可共享的上限，或该线路上有其他摄像头正在传输 | 减少摄像头数量、端到端使用巨型帧，或使用更快的网卡。 **ROI/像素合并无济于事**（共享与帧大小无关）。在测试台上，`CHLOROS_ARRAY_ALLOW_OVERSUBSCRIBED=1`会覆盖该错误（接受数据包丢失） |
 | 阵列通过 `slip-emit-and-capture`（串行）连接到低速网络 | 相机无法以足够慢的速率同步共享该线路，因此只能轮流工作；帧数据无法在同一瞬间传输 | 使用巨型帧或更快的网卡可恢复同时捕获； `--force-tier sim-capture-sim-emit` 坚持此模式（结果反而导致数据包丢失） |
@@ -1727,21 +1711,11 @@ x86_64 系统上，为 `USB-capped 400 MB/s (…; sysfs: bus=usb (usb2/2-1/2-1:1
 
 ## `chloros-cli daq`
 
-光谱传感器命令。 `pool-*` 命令是轻量级的 HTTP
-客户端，它们通过后端的持久化连接池驱动传感器，因此需要一个正在运行的后端（参见 [启动后端](#start-the-backend))。后端拥有传输通道，因此CLI
-和SDK
-脚本共享一个活动句柄，而非争夺串行端口。`pool-discover`是获取DAQ-M的BLE MAC地址的唯一方法。
+光谱传感器命令。 `pool-*` 命令是轻量级的 HTTP 客户端，它们通过后端的持久化连接池驱动传感器，因此需要一个正在运行的后端（参见 [启动后端](#start-the-backend))。后端拥有传输通道，因此CLI 和SDK 脚本共享一个活动句柄，而非争夺串行端口。`pool-discover`是获取DAQ-M的BLE MAC地址的唯一方法。
 
-> **`chloros-cli daq --help`**（或 `-h`、`daq help`）会列出 `pool-*` 的子命令（在 Linux
-上，还会列出构建包中包含的直接硬件命令）， 而 `chloros-cli daq <subcommand> --help`（或 `daq help <subcommand>`）则列出了每个子命令的选项。这些选项涵盖连接、 流、记录校准后的 `.daq` 文件、交换电容曲线以及将 DAQ 绑定到相机；对于 DAQ-E，还包括其网络设置、PTP、重启和固件更新。 还可以通过 `chloros_sdk.connect_daq_sensor()` 命令使用 Python
-控制 DAQ，该命令使用相同的池化路径。
+> **`chloros-cli daq --help`**（或 `-h`、`daq help`）会列出 `pool-*` 的子命令（在 Linux 上，还会列出构建包中包含的直接硬件命令）， 而 `chloros-cli daq <subcommand> --help`（或 `daq help <subcommand>`）则列出了每个子命令的选项。这些选项涵盖连接、 流、记录校准后的 `.daq` 文件、交换电容曲线以及将 DAQ 绑定到相机；对于 DAQ-E，还包括其网络设置、PTP、重启和固件更新。 还可以通过 `chloros_sdk.connect_daq_sensor()` 命令使用 Python 控制 DAQ，该命令使用相同的池化路径。
 >
-> **请在所有平台上使用 `pool-*` 命令。** 这些命令在 Windows
-、Linux
-和 Jetson 上的行为一致。在 Windows
-上， `daq discover` 和 `daq list` 是 `pool-discover` 的别名，而任何其他非  的 `daq` 命令2567的任何其他`daq`命令，都会以`1`和`DAQ direct-hardware commands require the full daq package`退出。在Linux
-和Jetson上， `daq discover`、`daq list` 以及其他非 `pool-*` 的 `daq` 命令是 DAQ 工具的直接非硬件命令：它们在CLI
-的独立进程中打开传感器， 位于后端进程池之外（因此并非由后端、GUI 或脚本持有的传感器），且该处接受 `daq discover`、`--only` 和 `--timeout`，但不接受 `--json`。本文档仅记录 `pool-*` 命令。
+> **请在所有平台上使用 `pool-*` 命令。** 这些命令在 Windows、Linux 和 Jetson 上的行为一致。在 Windows 上， `daq discover` 和 `daq list` 是 `pool-discover` 的别名，而任何其他非  的 `daq` 命令2567的任何其他`daq`命令，都会以`1`和`DAQ direct-hardware commands require the full daq package`退出。在Linux 和Jetson上， `daq discover`、`daq list` 以及其他非 `pool-*` 的 `daq` 命令是 DAQ 工具的直接非硬件命令：它们在CLI 的独立进程中打开传感器， 位于后端进程池之外（因此并非由后端、GUI 或脚本持有的传感器），且该处接受 `daq discover`、`--only` 和 `--timeout`，但不接受 `--json`。本文档仅记录 `pool-*` 命令。
 
 ### DAQ 传感器首次连接工作流
 
@@ -1786,33 +1760,24 @@ chloros-cli daq pool-disconnect --sensor-id CB-7C-A8-2E-5F
 | `daq pool-connect --ble` | 通过 BLE 进行 DAQ-M，自动扫描 MAC 地址。 |
 | `daq pool-connect --mac MAC` (`-m`) | 通过蓝牙低功耗（BLE）连接至已知 MAC 地址的 DAQ-M（隐含 `--ble`）。 |
 | `daq pool-connect --eth-host HOST` | 通过以太网连接的 DAQ-E，使用已知主机名或 IP 地址（隐含 `--eth`）。 |
-| `daq pool-connect --eth` | 通过以太网进行 DAQ-E 连接，主机自动发现（mDNS + ARP 备用方案；在 Windows
-和 Linux
-上即使 ARP 缓存为空也能正常工作）。 |
+| `daq pool-connect --eth` | 通过以太网进行 DAQ-E 连接，主机自动发现（mDNS + ARP 备用方案；在 Windows 和 Linux 上即使 ARP 缓存为空也能正常工作）。 |
 | `daq pool-connect --integration-time MS (-t) --frame-avg N (-f) --no-ae` | 调整积分窗口/AE状态。 |
 | `daq pool-connect --no-stream` | 建立连接但暂不开始流式传输 （随后接 `pool-stream --start`）。 |
 | `daq pool-connect --cap-id {none, fov_15, fov_30, fov_45, fov_60, fov_90, sunshine_cosine}` | 峰值校正配置文件。后端默认值为 `sunshine_cosine`； `none` 是一个裸传感器。[DAQ-E-S](#daq-e-s--fixed-diffuser-and-tilt-sensor) 会忽略它（固定扩散器）。**传感器出厂时为裸传感器，因此请为安装的盖子命名：**默认记录为假定的 (`cap_id_source=auto_default`)，处理过程会对此发出警告，因为未经阳光校正的裸机 DAQ-U 读数会高出约 30 倍。|
-| `daq pool-discover [--only usb,ble,eth] [--timeout SEC] [--json]` | 扫描每个传输通道中可连接的传感器，但不进行连接。 **这是查找 DAQ-M 的 BLE MAC 地址的方法。** `--timeout` 按传输通道设置（默认 5 秒，范围 1-20）。传感器池中已打开的传感器不会被列出——已连接的 DAQ-M 会停止广播——因此请使用 `pool-list` 查询这些传感器。 `usb` 仅列出 USB 串行设备：计算机自身的串行端口（`COM1`，Linux
-的 `/dev/ttyS*`）不能作为传感器，因此被排除在外。 |
+| `daq pool-discover [--only usb,ble,eth] [--timeout SEC] [--json]` | 扫描每个传输通道中可连接的传感器，但不进行连接。 **这是查找 DAQ-M 的 BLE MAC 地址的方法。** `--timeout` 按传输通道设置（默认 5 秒，范围 1-20）。传感器池中已打开的传感器不会被列出——已连接的 DAQ-M 会停止广播——因此请使用 `pool-list` 查询这些传感器。 `usb` 仅列出 USB 串行设备：计算机自身的串行端口（`COM1`，Linux 的 `/dev/ttyS*`）不能作为传感器，因此被排除在外。 |
 | `daq pool-list` | 显示后端池中的所有传感器。 |
-| `daq pool-bind (--camera SERIAL \| --array ARRAY_ID) {SENSOR \| --clear}` | 将相机或数组绑定到 DAQ，类似于 GUI 中光传感器选择的功能： 其捕获操作将使用、匹配并保存该数据采集卡的读数。`SENSOR` 是来自 `pool-list` 的传感器 ID，或是访问该数据采集卡的地址。`--clear` （不包括 `SENSOR`）将解除绑定， 捕获操作将回退到最新的数据采集设备。绑定状态将持续至后端重启，或直至该摄像头、数组或数据采集设备断开连接：断开连接（此处指从SDK
-或应用程序中断开）会解除其所断开硬件的所有绑定，无论由谁设置，数组成员的绑定将随数组一同解除。 相机必须已连接、位于当前打开的项目中，或此前已在该计算机上打开过；数组也必须已连接或位于当前打开的项目中；任何其他序列号或 ID 都会因名称不符而被拒绝，且不会建立任何绑定。 |
-| `daq pool-disconnect {--sensor-id ID \| --all}` | 释放 — 无论由谁打开该传感器，因此它也会释放因脚本崩溃而留在池中的传感器（先完成该传感器上的任何录制操作）。不在池中的传感器无内容可释放： 它将输出 `ID: already released (not in the pool)` 并退出 `0`；若后端拒绝释放或未确认释放，则退出 `1`。 SDK
-：`DAQSensorSession.force_disconnect()`。 |
+| `daq pool-bind (--camera SERIAL \| --array ARRAY_ID) {SENSOR \| --clear}` | 将相机或数组绑定到 DAQ，类似于 GUI 中光传感器选择的功能： 其捕获操作将使用、匹配并保存该数据采集卡的读数。`SENSOR` 是来自 `pool-list` 的传感器 ID，或是访问该数据采集卡的地址。`--clear` （不包括 `SENSOR`）将解除绑定， 捕获操作将回退到最新的数据采集设备。绑定状态将持续至后端重启，或直至该摄像头、数组或数据采集设备断开连接：断开连接（此处指从SDK 或应用程序中断开）会解除其所断开硬件的所有绑定，无论由谁设置，数组成员的绑定将随数组一同解除。 相机必须已连接、位于当前打开的项目中，或此前已在该计算机上打开过；数组也必须已连接或位于当前打开的项目中；任何其他序列号或 ID 都会因名称不符而被拒绝，且不会建立任何绑定。 |
+| `daq pool-disconnect {--sensor-id ID \| --all}` | 释放 — 无论由谁打开该传感器，因此它也会释放因脚本崩溃而留在池中的传感器（先完成该传感器上的任何录制操作）。不在池中的传感器无内容可释放： 它将输出 `ID: already released (not in the pool)` 并退出 `0`；若后端拒绝释放或未确认释放，则退出 `1`。 SDK：`DAQSensorSession.force_disconnect()`。 |
 | `daq pool-latest --sensor-id ID [--recent N] [--json]` | 最近的 N 个频谱帧（默认 1）。 |
 | `daq pool-stream --sensor-id ID [--start \| --stop]` | 恢复/暂停流式传输。 |
 | `daq pool-record --sensor-id ID [--duration SEC] [-o DIR] [--device-name NAME] [--confirm-after S] [--heartbeat S]` / `--stop` | 开始/停止 .daq 记录。 `-o` 在后端计算机上的默认值为 `~/Documents/DAQ Live View`（相对路径位于您运行该命令的文件夹之下）；`--duration`（`-d`，默认值为`0`，直至`--stop`）。 `--confirm-after S` 会在开始后 S 秒内未收到任何读数时发出警告（默认值为 20；设为 0 则关闭该功能）；使用 `--duration` 时， `--heartbeat S` 每 S 秒输出读数计数，并在计数停止增长时发出警告（默认 30；设为 0 则关闭该功能）。当 DAQ-E 上的记录一旦静默，在后端重新连接后会继续写入同一文件，而 `--stop` 会列出数据缺失段（[停止传输数据的 DAQ-E](#a-daq-e-that-stops-delivering))。Ctrl+C 可提前终止 `--duration` 记录并报告该情况； 若未启用 `--duration`，Ctrl+C 后录制仍会继续运行（退出 `130`），直至 `--stop`。 |
 | `daq pool-set-cap --sensor-id ID --cap-id CAP` | 在运行时切换电容校正配置文件。必须设置 `--cap-id`；`--cap-id none` 会移除电容校正 （即裸传感器）。DAQ-E-S 设备会将 `as_recorded` 保持为当前设置值。 |
-| `daq pool-enable-ptp --sensor-id ID` | 为 PTP 处于关闭状态的 DAQ-E 设备重新启用 PTP。该设置将保存在设备上， 因此，已关闭的设备将保持关闭状态——其时间戳不会与PTP同步——直到执行此命令。 `pool-list` 会标记此类设备（`!! PTP is switched OFF`）并为其打印此命令。Chloros
-绝不会自行将设备重新启用，因为关闭可能是故意的。 |
-| `daq pool-info --sensor-id ID [--json]` | DAQ-E 自身的设置：其固件（以及该Chloros
-版本是否包含更新版本）、其地址及获取地址的方式 （DHCP / 链路本地 / 静态），传感器运行该命令前保存的网络设置（包含通过 `--no-reboot` 保存的设置）、开机时的数据流以及 PTP。对于数据流无法到达本计算机的传感器，该命令会在建立新连接时读取传感器状态并报告此情况。 |
+| `daq pool-enable-ptp --sensor-id ID` | 为 PTP 处于关闭状态的 DAQ-E 设备重新启用 PTP。该设置将保存在设备上， 因此，已关闭的设备将保持关闭状态——其时间戳不会与PTP同步——直到执行此命令。 `pool-list` 会标记此类设备（`!! PTP is switched OFF`）并为其打印此命令。Chloros 绝不会自行将设备重新启用，因为关闭可能是故意的。 |
+| `daq pool-info --sensor-id ID [--json]` | DAQ-E 自身的设置：其固件（以及该Chloros 版本是否包含更新版本）、其地址及获取地址的方式 （DHCP / 链路本地 / 静态），传感器运行该命令前保存的网络设置（包含通过 `--no-reboot` 保存的设置）、开机时的数据流以及 PTP。对于数据流无法到达本计算机的传感器，该命令会在建立新连接时读取传感器状态并报告此情况。 |
 | `daq pool-set-network --sensor-id ID {--auto \| --static IP [--mask M] [--gateway G]} [--no-reboot] [--force] [--timeout S]` | 将 DAQ-E 设置为 DHCP (`--auto`) 或静态地址 (`--mask`，默认值为 `255.255.255.0`)。传感器将重启以应用该设置，并使用其原有设置重新连接，等待时间最长为 `--timeout` 秒（默认 45 秒）； `--no-reboot` 仅保存该设置。参见 [DAQ-E 设备设置](#daq-e-device-settings)。 |
-| `daq pool-set-auto-stream --sensor-id ID {--on \| --off}` | 指定 DAQ-E 在开机时若未连接任何软件，是否开始数据流传输（该设置保存在传感器中）。无论如何，Chloros
-都会自行启动数据流。 |
+| `daq pool-set-auto-stream --sensor-id ID {--on \| --off}` | 指定 DAQ-E 在开机时若未连接任何软件，是否开始数据流传输（该设置保存在传感器中）。无论如何，Chloros 都会自行启动数据流。 |
 | `daq pool-reboot --sensor-id ID [--timeout S]` | 重启 DAQ-E 并使用其先前设置重新连接 （等待时间最长为 `--timeout`，默认 45 秒）。 |
-| `daq pool-update-firmware --sensor-id ID [--timeout S]` | 将此 Chloros
-版本随附的 DAQ-E 固件刷写到运行旧版本的传感器上，然后重新连接 （约一分钟；请勿关闭电源；`--timeout` 默认等待 45 秒直至其恢复）。已处于最新版本的传感器将保持原状。 |
+| `daq pool-update-firmware --sensor-id ID [--timeout S]` | 将此 Chloros 版本随附的 DAQ-E 固件刷写到运行旧版本的传感器上，然后重新连接 （约一分钟；请勿关闭电源；`--timeout` 默认等待 45 秒直至其恢复）。已处于最新版本的传感器将保持原状。 |
 
 ### 停止传输数据的 DAQ-E
 
@@ -1830,8 +1795,7 @@ chloros-cli daq pool-disconnect --sensor-id CB-7C-A8-2E-5F
 
 ### DAQ-E-S — 固定式漫射器与倾斜传感器
 
-**DAQ-E-S** 是一款 DAQ-E，但有两处对软件而言至关重要的差异。其余所有功能——包括设备发现、连接、PTP、记录以及下文所述的设备设置——均与 DAQ-E 完全一致。**其漫射器为固定式，因此无需进行顶盖校正。** 该 Sunshine 风格的漫射器为内置式，且在工厂校准测量时已安装在设备上，因此该校准值已准确反映向下辐射通量。Chloros
-无论被要求什么，都会将其顶盖设置为 `as_recorded`（无配置文件）： 若指定以该设备命名的上限（如 `sunshine_cosine`、`fov_*`、`none`），系统会忽略并显示提示信息，且其记录数据将存储为 `cap_id_source=model`，因此针对该传感器的“假定上限”警告永远不会触发。也不要手动为其数据设置上限：若在顶部放置名为 `sunshine_cosine` 的上限，读数将高出约 11 倍。
+**DAQ-E-S** 是一款 DAQ-E，但有两处对软件而言至关重要的差异。其余所有功能——包括设备发现、连接、PTP、记录以及下文所述的设备设置——均与 DAQ-E 完全一致。**其漫射器为固定式，因此无需进行顶盖校正。** 该 Sunshine 风格的漫射器为内置式，且在工厂校准测量时已安装在设备上，因此该校准值已准确反映向下辐射通量。Chloros 无论被要求什么，都会将其顶盖设置为 `as_recorded`（无配置文件）： 若指定以该设备命名的上限（如 `sunshine_cosine`、`fov_*`、`none`），系统会忽略并显示提示信息，且其记录数据将存储为 `cap_id_source=model`，因此针对该传感器的“假定上限”警告永远不会触发。也不要手动为其数据设置上限：若在顶部放置名为 `sunshine_cosine` 的上限，读数将高出约 11 倍。
 
 **该传感器配备了一个三轴加速度计。** 阳光漫射器的余弦响应仅在设备水平放置时有效，因此倾斜的传感器会报告错误的辐照度——且反射率会继承该误差——且无其他异常症状。因此，每个 DAQ-E-S 读数都包含其姿态信息：
 
@@ -1864,30 +1828,21 @@ chloros-cli daq pool-update-firmware --sensor-id daq-e-def330
 ```
 
 - **若未配置 `--gateway`，则 `--static` 不会保存网关**（之前设置的任何网关都会被丢弃），这对于没有路由器的摄像头网络来说是正确的。
-- **静态地址必须位于本计算机的网络中。** 若传感器网络中该计算机的子网不包含此IP地址，Chloros
-将拒绝该设置：重启后将无法连接传感器以恢复原设置。仅当该计算机将被重新分配地址或路由至新子网时，才应启用`--force`。
+- **静态地址必须位于本计算机的网络中。** 若传感器网络中该计算机的子网不包含此IP地址，Chloros 将拒绝该设置：重启后将无法连接传感器以恢复原设置。仅当该计算机将被重新分配地址或路由至新子网时，才应启用`--force`。
 - **传感器正在录制时，系统将拒绝重启。**请先停止录制（`pool-record --stop`）。在重启前启动的录制任务将因重启而终止， 且 `pool-set-network`、`pool-reboot` 和 `pool-update-firmware` 将以一行 `Warning:` 结束，该行会标明录制文件的名称 （即使传感器随后未恢复连接也是如此）。
-- **重启后，Chloros
-仅重新连接传感器本身。** 它会在传感器原先所在的位置——以及在 `--auto` 之后，还会在其 `daq-e-<id>.local` 名称下——等待包含传感器名称、 主机名和型号的响应，并根据其原有的网络适配器（MAC）地址，在响应的地址上重新连接该传感器。 只有来自该 MAC 地址的响应才会被接受，因此，对于通过路由器连接传感器的计算机，或处于默认 NAT 网络环境下的 WSL2，如果传感器因 DHCP 分配而被移至新地址，则无法重新连接： 该命令会提示此情况，并打印`pool-connect --eth-host <its address> …`命令，该命令将传感器恢复至其原有的快门速度和曝光设置。
+- **重启后，Chloros 仅重新连接传感器本身。** 它会在传感器原先所在的位置——以及在 `--auto` 之后，还会在其 `daq-e-<id>.local` 名称下——等待包含传感器名称、 主机名和型号的响应，并根据其原有的网络适配器（MAC）地址，在响应的地址上重新连接该传感器。 只有来自该 MAC 地址的响应才会被接受，因此，对于通过路由器连接传感器的计算机，或处于默认 NAT 网络环境下的 WSL2，如果传感器因 DHCP 分配而被移至新地址，则无法重新连接： 该命令会提示此情况，并打印`pool-connect --eth-host <its address> …`命令，该命令将传感器恢复至其原有的快门速度和曝光设置。
 - **`pool-update-firmware`会拒绝无法读取其固件版本的传感器。** 闪光后，如果传感器恢复连接的时间超过了等待时限，并不表示其已故障：一旦其响应，系统将使用新固件的设置与其重新建立连接，且该命令会提示连接速度较慢。
-- **固件更新需要一个入站 TCP 连接。** 传感器会重新连接到这台计算机以收集图像。Chloros
-会在路由至传感器的网卡上监听（若无法确定具体网卡，则在所有网卡上监听），并仅服务于传感器自身的地址； 任何其他连接都会在未处理的情况下被关闭。在 Windows
-系统中，安装程序的 `Chloros Backend (TCP-In)` 防火墙规则允许其通过（参见 [Windows
-(.exe)](#windows-exe))；若防火墙阻挡该连接，更新将因 `… device never connected back on TCP <port> …` 错误而失败。
+- **固件更新需要一个入站 TCP 连接。** 传感器会重新连接到这台计算机以收集图像。Chloros 会在路由至传感器的网卡上监听（若无法确定具体网卡，则在所有网卡上监听），并仅服务于传感器自身的地址； 任何其他连接都会在未处理的情况下被关闭。在 Windows 系统中，安装程序的 `Chloros Backend (TCP-In)` 防火墙规则允许其通过（参见 [Windows (.exe)](#windows-exe))；若防火墙阻挡该连接，更新将因 `… device never connected back on TCP <port> …` 错误而失败。
 - **在 WSL2 环境下，请使用镜像网络**（`networkingMode=mirrored` 中的 `%UserProfile%\.wslconfig`）。 在默认的NAT模式下，该计算机在传感器网络中的地址属于WSL自身，因此所有静态地址都会被拒绝（除非出现`--force`），实时流无法到达WSL，固件更新也无法完成，因为传感器需要回连至计算机以接收镜像。
 - **传感器 ID 和主机名不会改变。**无论其地址为何，DAQ-E 仍然是 `daq-e-<id>` 和 `daq-e-<id>.local`，因此 `--eth-host daq-e-<id>.local` 仍能找到它。
-- **图形界面（GUI）的设置保持不变**：在“光传感器”选项卡中，进入传感器设置（齿轮图标），选择“网络”。图形界面会保持与传感器的独立连接，因此若通过图形界面修改其已建立连接的传感器： 通过CLI
-重启将终止GUI与该传感器的会话。
-- 对应的SDK
-设备为`DAQSensorSession.device_info()`、`set_network()`、`set_auto_stream()`、 `reboot()` 和 `update_firmware()`。
+- **图形界面（GUI）的设置保持不变**：在“光传感器”选项卡中，进入传感器设置（齿轮图标），选择“网络”。图形界面会保持与传感器的独立连接，因此若通过图形界面修改其已建立连接的传感器： 通过CLI 重启将终止GUI与该传感器的会话。
+- 对应的SDK 设备为`DAQSensorSession.device_info()`、`set_network()`、`set_auto_stream()`、 `reboot()` 和 `update_firmware()`。
 
 ---
 
 ## `chloros-cli project`
 
-打开、连接并运行一个已保存的 Chloros
-项目 （包含 `cameras.json`、`sensors.json` 和 `project.json` 的文件夹）。所有操作均通过后端处理，因此图形界面（GUI）和命令行界面（CLI
-）生成的硬件状态完全一致。
+打开、连接并运行一个已保存的 Chloros 项目 （包含 `cameras.json`、`sensors.json` 和 `project.json` 的文件夹）。所有操作均通过后端处理，因此图形界面（GUI）和命令行界面（CLI）生成的硬件状态完全一致。
 
 ### 子命令参考
 
@@ -1895,21 +1850,18 @@ chloros-cli daq pool-update-firmware --sensor-id daq-e-def330
 | --- | --- |
 | `project open PATH [--relink FOLDER]` | 打印项目的设备清单（摄像头、阵列、传感器），从其文件中读取数据，并检查其源文件（参见 [已移动的项目](#a-moved-project---relink)）。 该命令不会在后端打开该项目：后端已打开的项目及其设备和录像将保持原状。若无法找到该项目的任何源文件，则退出 `1`。 |
 | `project devices PATH [--reconnect]` | 列出或重新运行设备发现。 |
-| `project connect PATH [--cameras-only] [--sensors-only] [--packed {auto,on,off}]` | 连接所有已保存的摄像头/阵列/传感器。每个阵列的连接方式与 `lattice array-connect` 相同： 最长 600 秒，其步骤将打印到 stderr（`[array <id>]    <s> s: <step>`；标准输出为 JSON
-报告）， 若阵列在此时间内未能连接成功，则操作将被撤销——其摄像头将恢复为初始发现状态——并在 `errors` 下报告，绝不会保持连接状态。`--packed` 为每个阵列设置压缩的 12 位传输模式 （默认值为 `auto`；项目不保存每个数组的设置；参见 [12 位压缩传输](#packed-12-bit-transport---packed))。每个光传感器都会在后端的DAQ池中，以其保存的地址、积分时间、帧均值、自动曝光和盖帽参数被打开： 未选择上限的传感器将采用 `sunshine_cosine`；保存为“裸”状态的传感器（`none`）保持“裸”状态；而 DAQ-E-S 传感器永远不设置上限。 GUI 的 DAQ 面板不属于该池：请先在该面板中关闭传感器。 |
+| `project connect PATH [--cameras-only] [--sensors-only] [--packed {auto,on,off}]` | 连接所有已保存的摄像头/阵列/传感器。每个阵列的连接方式与 `lattice array-connect` 相同： 最长 600 秒，其步骤将打印到 stderr（`[array <id>]    <s> s: <step>`；标准输出为 JSON 报告）， 若阵列在此时间内未能连接成功，则操作将被撤销——其摄像头将恢复为初始发现状态——并在 `errors` 下报告，绝不会保持连接状态。`--packed` 为每个阵列设置压缩的 12 位传输模式 （默认值为 `auto`；项目不保存每个数组的设置；参见 [12 位压缩传输](#packed-12-bit-transport---packed))。每个光传感器都会在后端的DAQ池中，以其保存的地址、积分时间、帧均值、自动曝光和盖帽参数被打开： 未选择上限的传感器将采用 `sunshine_cosine`；保存为“裸”状态的传感器（`none`）保持“裸”状态；而 DAQ-E-S 传感器永远不设置上限。 GUI 的 DAQ 面板不属于该池：请先在该面板中关闭传感器。 |
 | `project capture PATH NAME [-o DIR] [--format FMT] [--exposure US] [--gain DB] [--prefix P] [--orient]` | 来自命名相机或阵列的单次捕获（`--prefix` 为默认值，`capture`）。`--orient` （阵列）：阵列保存原始数据，该数据保持原生格式——这表示由 `process` 生成的产品应按 `array-capture --orient` 所示进行定向处理。默认：原生。 `project burst` / `stream` 以及配方中的 `capture` / `burst` / `stream`（`orient: true`) 均采用相同的选项。 |
 | `project burst PATH NAME [-n N] [-i S] [-o DIR] [--format FMT] [--exposure US] [--gain DB] [--prefix P] [--orient]` | 来自指定相机或阵列的 N 帧连拍（`-n/--count` 默认值为 5；`-i/--interval` 帧间隔（秒），默认值为 0）。 数组连拍会去除重复的同步组（过期监视器），因此部分循环的数组无法返回同一帧的 N 个副本； 并打印每次迭代的结果。若捕获过程中发生失败，将停止该突发捕获并退出 `1`，同时报告此前已保存的帧数。 |
 | `project stream PATH NAME [-n N] [--fps F] [-o DIR] [--format FMT] [--exposure US] [--gain DB] [--orient]` | 循环将数据捕获到磁盘：`--fps F` 捕获第二 （默认3），每次从摄像头捕获一帧，从数组捕获一组同步帧（采用与`project burst`相同的过期看门狗机制），直到`-n N`捕获 （默认 `0` = 直到按下 Ctrl+C，此时会打印已保存的帧数并退出 `0`；若未保存任何帧或文件写入失败，则退出 `1`； 若在 `-n N` 捕获前按下 Ctrl+C，则退出 `130`)。若捕获过程中失败，将停止流并退出 `1`，同时显示此前已保存的帧数。`--poll-interval` 已被弃用且将被忽略： 但系统仍会接受该指令，以便旧版脚本能够运行，同时会在标准错误输出中添加提示。 |
 | `project sensor read PATH NAME [--json]` | 最新频谱帧。 |
 | `project sensor log PATH NAME [--seconds SEC] [-o DIR] [--device-name NAME]` | 为 `--seconds` 录制 .daq 文件 （默认 10）。若记录中未包含任何读数，系统将在标准错误输出中报告该情况并退出 `1`。 |
-| `project run PATH RECIPE.yaml` | 执行 YAML/JSON
-捕获配方。 `--dry-run` 进行验证而不执行。 |
+| `project run PATH RECIPE.yaml` | 执行 YAML/JSON 捕获配方。 `--dry-run` 进行验证而不执行。 |
 | `project align calibrate PATH NAME [--method M] [--model M] [--frames N] [--reference SN] [--max-features N] [--ratio-threshold F] [--ransac-threshold-px F] [--min-matches N] [--max-reproj-err-px F] [--checkerboard RxC] [--name PROFILE]` | 计算数组的对齐参数 — 参见 [下方的标志表](#project-align-calibrate-options)。 |
 | `project align status PATH NAME [--json]` | 打印当前对齐配置文件。 |
 | `project align clear PATH NAME` | 清除缓存的配置文件。 |
 | `project align tweak PATH NAME --serial SN [--dx N] [--dy N] [--rotation-deg N] [--scale N]` | 微调一个从属节点的变换 （默认值为 `0`、`0`、`0`、`1.0`：不作更改）。 |
-| `project align export PATH NAME --to FILE` | 将配置文件保存为JSON
-。 |
+| `project align export PATH NAME --to FILE` | 将配置文件保存为JSON。 |
 | `project align import PATH NAME --from FILE [--no-validate]` | 加载已保存的配置文件。 |
 
 #### `project align calibrate` 选项
@@ -1926,8 +1878,7 @@ chloros-cli daq pool-update-firmware --sensor-id daq-e-def330
 | `--min-matches N` | `15` | **质量阈值** — 若符合的内点数量低于此值，则拒绝该求解结果。 |
 | `--max-reproj-err-px F` | `4.0` | **质量阈值** — 若重投影均方根误差超过此值，则拒绝该求解结果。 |
 | `--checkerboard RxC` | — | `--method checkerboard` 的板级几何信息，例如 `9x6`。 |
-| `--name PROFILE` | 空 | 嵌入到保存的 JSON
-中的轮廓名称。 **非数组名称** — 该名称指位置参数 `NAME`。 |
+| `--name PROFILE` | 空 | 嵌入到保存的 JSON 中的轮廓名称。 **非数组名称** — 该名称指位置参数 `NAME`。 |
 
 这两个质量门槛是校准虽然成功解算却仍
 拒绝保存的原因：若配置文件未能通过其中任何一个门槛，将导致后续每次
@@ -1943,9 +1894,7 @@ chloros-cli daq pool-update-firmware --sensor-id daq-e-def330
 文件夹内的文件会在项目当前所在的文件夹中被查找，并在该处找到的每个路径
 都会被重新指向并保存 （`project.json` 会先作为
 `project.json.before-relink-<date>-<time>` 进行备份）。每次打开项目时——无论是应用程序本身，
-`chloros-cli project open`， `chloros-cli process` 导入现有项目、SDK
-
-以及 `chloros-mcp` 时，都会发生这一操作。路径仅会重定向到该位置实际存在的文件。
+`chloros-cli project open`， `chloros-cli process` 导入现有项目、SDK 以及 `chloros-mcp` 时，都会发生这一操作。路径仅会重定向到该位置实际存在的文件。
 
 位于项目文件夹之外的文件——例如通过 Hub 会话或“添加文件夹”导入的文件——
 无法通过这种方式找到。请指定它们当前所在的文件夹名称：
@@ -1961,8 +1910,7 @@ chloros-cli project open "N:/Chloros Projects/Field_A" --relink "E:/backup/Hub P
 重新指向的内容、找到的源文件数量，以及其余文件所在的
 文件夹。 仍有部分缺失：显示警告，退出 `0` —— 项目将随其余部分打开。未
 找到任何文件：显示错误并列出这些文件夹名称以及 `--relink`，退出 `1`；后端同样
-拒绝为 `process` 或 `project devices --reconnect` 打开此类项目（HTTP
-409 `PROJECT_SOURCES_MISSING`）。
+拒绝为 `process` 或 `project devices --reconnect` 打开此类项目（HTTP 409 `PROJECT_SOURCES_MISSING`）。
 
 ### 示例
 
@@ -2057,7 +2005,7 @@ chloros-cli project run "/path/to/project" recipe.yaml
 chloros-cli project run "/path/to/project" recipe.yaml --dry-run
 ```
 
-**每次运行都会首先与项目进行核对。**每个操作的键必须恰好是上述动词之一——例如 `- capture: {name: FrontLeft}`，而非 `- action: capture` 或 `- type: capture` ——例如，`name` 对应项目中的 `cameras.json` / `sensors.json`，而 `apply` / `capture` / `burst` / `stream` 以及用于 `sensor` 的光传感器； `stream` 需要 `count` &gt; 0，而 `wait` 需要持续时间。包含任何此类错误的配方将**不**执行任何操作 （`[recipe] error: …`、`[recipe] not run: …`、退出 `1`），即使存在 `stop_on_error: false` 也不例外。 步骤未使用的键会被标记为 `[recipe] warning:`，该配方驱动的、当前未连接的每个数组或光传感器也是如此。 配方绝不会连接设备：请先运行 `chloros-cli project connect PATH`。`--dry-run` 会打印配方内容，随后显示相同的错误和警告，当配方出现错误时，`[recipe] valid: …` / `NOT valid: …`，不执行任何操作，并在配方出现错误时退出 `1`。
+**每次运行都会首先与项目进行核对。**每个操作的键必须恰好是上述动词之一——例如 `- capture: {name: FrontLeft}`，而非 `- action: capture` 或 `- type: capture` ——例如，`name` 对应项目中的 `cameras.json` / `sensors.json`，而 `apply` / `capture` / `burst` / `stream` 以及用于 `sensor` 的光传感器； `stream` 需要 `count` > 0，而 `wait` 需要持续时间。包含任何此类错误的配方将**不**执行任何操作 （`[recipe] error: …`、`[recipe] not run: …`、退出 `1`），即使存在 `stop_on_error: false` 也不例外。 步骤未使用的键会被标记为 `[recipe] warning:`，该配方驱动的、当前未连接的每个数组或光传感器也是如此。 配方绝不会连接设备：请先运行 `chloros-cli project connect PATH`。`--dry-run` 会打印配方内容，随后显示相同的错误和警告，当配方出现错误时，`[recipe] valid: …` / `NOT valid: …`，不执行任何操作，并在配方出现错误时退出 `1`。
 
 ---
 
@@ -2096,7 +2044,7 @@ chloros-cli project run "/path/to/project" recipe.yaml --dry-run
 ## 故障排除提示
 
 - **“需要登录”** → 在该计算机上运行一次 `chloros-cli login EMAIL PASSWORD`。
-- **“该项目文件夹在该计算机上层级过深”** → 该计算机已禁用 Windows 长路径（Windows 默认设置），因此任何路径长度均不得超过 260 个字符，且产品路径位于项目文件夹下方最多约 130 个字符处。 未处理任何内容。该消息给出了符合要求的最长项目文件夹路径：请使用更短的文件夹（`-o` 或 `chloros-cli set-project-folder`），或启用 Windows 长路径并重启 Chloros。 Windows安装程序中提供“启用Windows长路径”选项，默认已勾选；否则请使用组策略：*计算机配置 &gt; 管理模板 &gt; 系统 &gt; 文件系统 &gt; 启用 Win32 长路径*。
+- **“该项目文件夹在该计算机上层级过深”** → 该计算机已禁用 Windows 长路径（Windows 默认设置），因此任何路径长度均不得超过 260 个字符，且产品路径位于项目文件夹下方最多约 130 个字符处。 未处理任何内容。该消息给出了符合要求的最长项目文件夹路径：请使用更短的文件夹（`-o` 或 `chloros-cli set-project-folder`），或启用 Windows 长路径并重启 Chloros。 Windows安装程序中提供“启用Windows长路径”选项，默认已勾选；否则请使用组策略：*计算机配置 > 管理模板 > 系统 > 文件系统 > 启用 Win32 长路径*。
 - **“后端无法访问”** → 启动 Chloros 桌面应用（Windows），或手动启动后端：在 Windows 上运行 `"C:\Program Files\Chloros\backend\chloros-backend.exe"`（位于安装文件夹中的 `backend` 文件夹内； 该文件不在 `PATH` 中），Linux 系统上为 `chloros-backend`。若为远程连接，请检查 `CHLOROS_BACKEND_URL`。
 - **`lattice` 命令执行失败，提示“未找到 LATTICE 相机驱动程序”** → 后端无法加载随其安装的 LATTICE 相机运行时。 所有 `lattice` 命令均在后端运行；CLI 本身不包含任何相机驱动程序。请重新安装 Chloros：Windows 安装程序和 .deb 包会将运行时文件安装在后端旁边。
 - **“Array connect”/“Array Settings”显示“FRAMES WILL DROP”或“Reduce ROI to enable”** → 主机网卡的接收环大小过小（通常在网卡驱动程序更新后会重置为 32）。 请参阅 [主机网卡设置与调优](#host-nic-setup--tuning-lattice-arrays) — 设置 `ReceiveBufferLen=256`、`PendingReceives=64`。

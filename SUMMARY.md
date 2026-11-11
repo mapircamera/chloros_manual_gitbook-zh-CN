@@ -66,7 +66,7 @@
 * [动态计算自适应](processing-architecture/dynamic-compute-adaptation.md)
 * [处理管道](processing-architecture/processing-pipeline.md)
 
-## 参考资料 (CLI &amp; SDK)
+## 参考资料 (CLI & SDK)
 
 * [Chloros CLI 参考资料](reference/cli-reference.md)
 * [Chloros Python SDK 参考](reference/sdk-reference.md)

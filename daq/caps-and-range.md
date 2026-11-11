@@ -1,10 +1,8 @@
 # 探头轮廓与校准范围
 
-> 关于盖板本身——即哪款盖板与哪种传感器配套、安装方式及其光学特性——已在**[DAQ用户手册](https://mapir.gitbook.io/daq)**中详细说明。本页介绍如何向Chloros
-*声明*所安装的盖板，这正是确保校正准确的关键。
+> 关于盖板本身——即哪款盖板与哪种传感器配套、安装方式及其光学特性——已在**[DAQ用户手册](https://mapir.gitbook.io/daq)**中详细说明。本页介绍如何向Chloros *声明*所安装的盖板，这正是确保校正准确的关键。
 
-每台 DAQ 光传感器的出厂辐射校准数据描述的都是*裸露*的传感器。安装在扩散板上的物理盖子会改变传感器收集的光线，因此 Chloros
-会在校准数据包的基础上应用出厂测得的 **盖子校正曲线**。 声明正确的盖子是获得校准数据的一部分——本页面介绍了各型号对应的盖子种类、声明方法，以及传感器实际的校准光谱范围。
+每台 DAQ 光传感器的出厂辐射校准数据描述的都是*裸露*的传感器。安装在扩散板上的物理盖子会改变传感器收集的光线，因此 Chloros 会在校准数据包的基础上应用出厂测得的 **盖子校正曲线**。 声明正确的盖子是获得校准数据的一部分——本页面介绍了各型号对应的盖子种类、声明方法，以及传感器实际的校准光谱范围。
 
 ## 各型号的盖板可用性
 
@@ -50,30 +48,22 @@ chloros-cli daq pool-connect --eth-host daq-e-def330.local --cap-id sunshine_cos
 chloros-cli daq pool-set-cap --sensor-id daq-e-def330 --cap-id fov_45
 ```
 
-CLI
-在语法上接受完整的 `cap_id` 列表（例如 `{none, fov_15, fov_30, fov_45, fov_60, fov_90, sunshine_cosine}`）； 每个配置文件在连接时都会根据传感器模型进行验证，因此如果 cap ID 不可用（例如在 DAQ-U 上使用仅限 E 型的 ID），系统会明确报错而非进行错误校正。若未传入参数，后端的默认值为 `sunshine_cosine`。
+CLI 在语法上接受完整的 `cap_id` 列表（例如 `{none, fov_15, fov_30, fov_45, fov_60, fov_90, sunshine_cosine}`）； 每个配置文件在连接时都会根据传感器模型进行验证，因此如果 cap ID 不可用（例如在 DAQ-U 上使用仅限 E 型的 ID），系统会明确报错而非进行错误校正。若未传入参数，后端的默认值为 `sunshine_cosine`。
 
-Python
-SDK
-：在连接时使用 `connect_daq_sensor(cap_id="sunshine_cosine")` 为 cap 命名，或在运行时使用 `DAQSensorSession.set_cap("fov_45")` 进行替换；请参阅 [SDK
-参考](../reference/sdk-reference.md#daq-sensor-sessions)。
+Python SDK：在连接时使用 `connect_daq_sensor(cap_id="sunshine_cosine")` 为 cap 命名，或在运行时使用 `DAQSensorSession.set_cap("fov_45")` 进行替换；请参阅 [SDK 参考](../reference/sdk-reference.md#daq-sensor-sessions)。
 
-高级：配置文件随Chloros
-安装包内置于 `daq/cap_profiles/<u|m|e>/<cap_id>.json` 中，用户可通过 `~/.chloros/daq_cap_profiles/<u|m|e>/<cap_id>.json` 进行覆盖。
+高级：配置文件随Chloros 安装包内置于 `daq/cap_profiles/<u|m|e>/<cap_id>.json` 中，用户可通过 `~/.chloros/daq_cap_profiles/<u|m|e>/<cap_id>.json` 进行覆盖。
 
 除了上限限制外，从未重新校准过的传感器会自动获得基于设备群的小幅暗偏移优化——无需用户操作。
 
 ## DAQ-E-S：固定扩散板和倾斜角
 
-**DAQ-E-S** 是一款 DAQ-E，但有两处对 Chloros
-至关重要的差异。其余所有功能（发现、连接、PTP、记录、设备设置）均与 DAQ-E 完全一致。
+**DAQ-E-S** 是一款 DAQ-E，但有两处对 Chloros 至关重要的差异。其余所有功能（发现、连接、PTP、记录、设备设置）均与 DAQ-E 完全一致。
 
-* **其漫射器为固定式，因此无需进行漫射器校正。** 在进行出厂校准测量时，该扩散器已安装在设备上，因此该校准值已准确反映真实的向下辐射通量。无论系统如何要求，Chloros
-均不会对其应用任何上限曲线：以该设备命名的上限曲线会被忽略并显示提示信息，其记录数据会显示该上限曲线来自模型，且针对该设备的“假设上限”警告绝不会触发。 在“项目设置”→“DAQ 光传感器”中，该设备的行显示无上限值，且项目范围内的上限值覆盖设置对其无效。请勿手动对其数据应用上限值：否则，叠加的日照校正值将高出约 11 倍。
+* **其漫射器为固定式，因此无需进行漫射器校正。** 在进行出厂校准测量时，该扩散器已安装在设备上，因此该校准值已准确反映真实的向下辐射通量。无论系统如何要求，Chloros 均不会对其应用任何上限曲线：以该设备命名的上限曲线会被忽略并显示提示信息，其记录数据会显示该上限曲线来自模型，且针对该设备的“假设上限”警告绝不会触发。 在“项目设置”→“DAQ 光传感器”中，该设备的行显示无上限值，且项目范围内的上限值覆盖设置对其无效。请勿手动对其数据应用上限值：否则，叠加的日照校正值将高出约 11 倍。
 * **该设备配备了一个三轴加速度计。** 该扩散器的余弦响应仅在水平状态下有效，因此倾斜的传感器会报告错误的辐照度，且无其他异常症状。因此，每个 DAQ-E-S 读数都包含其俯仰角、横滚角和偏航角，而从该传感器记录的 `.daq` 文件会将这些数据存储在每个光谱旁边 (`imu_tilt_deg`, `imu_roll_deg`, `imu_pitch_deg`, …) 旁边，因此您可以区分是云层还是支架晃动造成的。
 
-有关每个姿态字段以及姿态数据流中故障的报告方式，请参阅 [CLI
-参考中的 DAQ-E-S](../reference/cli-reference.md#daq-e-s--fixed-diffuser-and-tilt-sensor)。
+有关每个姿态字段以及姿态数据流中故障的报告方式，请参阅 [CLI 参考中的 DAQ-E-S](../reference/cli-reference.md#daq-e-s--fixed-diffuser-and-tilt-sensor)。
 
 ## Sunshine cap 性能（户外配置）
 
@@ -97,7 +87,6 @@ SDK
 | 光谱采样 | 340–1010 nm，步长 5 nm（135 个点） |
 | 辐射校准范围 | **~374–974 nm**（由软件强制执行） |
 
-传感器报告完整的 340–1010 nm 网格数据，但可追溯至 NIST 的辐射增益范围为 ~374–974 nm。 对于任何光谱权重不足一半位于该范围内的相机波段，Chloros
-**将拒绝采用绝对反射率划分**，并报告跳过原因 `dls-uncalibrated-band-<nm>`，而非生成未经校准的产品。 在已上市的相机型号中，仅 F988 滤光片超出此范围；该型号改用反射率面板工作流——详见 [反射率工作流](reflectance.md)。
+传感器报告完整的 340–1010 nm 网格数据，但可追溯至 NIST 的辐射增益范围为 ~374–974 nm。 对于任何光谱权重不足一半位于该范围内的相机波段，Chloros **将拒绝采用绝对反射率划分**，并报告跳过原因 `dls-uncalibrated-band-<nm>`，而非生成未经校准的产品。 在已上市的相机型号中，仅 F988 滤光片超出此范围；该型号改用反射率面板工作流——详见 [反射率工作流](reflectance.md)。
 
 有关传感器型号、传输方式和传感器 ID，请参阅 [DAQ 概述](README.md)。关于处理过程中 cap 标记的使用方式，请参阅 [记录与 .daq 格式](recording.md)。

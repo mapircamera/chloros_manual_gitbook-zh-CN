@@ -1,17 +1,14 @@
 # 动态计算自适应
 
-Chloros
-1.3.0 采用硬件检测和自动处理策略选择机制。处理引擎可自动适配您的硬件——从 Jetson Orin Nano 到多 GPU 工作站——无需任何手动配置。
+Chloros 1.3.0 采用硬件检测和自动处理策略选择机制。处理引擎可自动适配您的硬件——从 Jetson Orin Nano 到多 GPU 工作站——无需任何手动配置。
 
 ***
 
 ## 工作原理
 
-Chloros
-启动时，会分析您的系统：
+Chloros 启动时，会分析您的系统：
 
-1. **检测操作系统** —— Windows
-或 Linux
+1. **检测操作系统** —— Windows 或 Linux
 2. **识别 CPU 核心数和总内存**
 
 3.**检测 GPU 是否存在** —— NVIDIA CUDA 能力、显存、模型
@@ -24,19 +21,16 @@ Chloros
 
 | 平台 | 缓存配置文件 |
 | --- | --- |
-| **Linux
-/ Jetson** | `~/.config/chloros/system_config.json`（优先采用 `XDG_CONFIG_HOME`） |
+| **Linux / Jetson** | `~/.config/chloros/system_config.json`（优先采用 `XDG_CONFIG_HOME`） |
 | **Windows** | `%LOCALAPPDATA%\Chloros\config\system_config.json` |
 
-删除该文件可强制进行重新检测——在添加 GPU 或更多内存后此操作非常有用。当缓存由不兼容的旧版本写入时，Chloros
-也会自动重新检测。
+删除该文件可强制进行重新检测——在添加 GPU 或更多内存后此操作非常有用。当缓存由不兼容的旧版本写入时，Chloros 也会自动重新检测。
 
 ***
 
 ## 计算策略
 
-Chloros
-会根据您的硬件从三种计算策略中选择一种：
+Chloros 会根据您的硬件从三种计算策略中选择一种：
 
 | 策略 | 何时选用 | 工作进程 | 执行器 | 管道 |
 | --- | --- | --- | --- | --- |
@@ -50,11 +44,7 @@ Chloros
 **GPU 策略需要能够使用 CUDA 的 PyTorch。** 若机器上的 PyTorch 无法使用 CUDA 设备，则无论其 GPU 型号如何，均会获得 `CPU_PARALLEL`。 1.3.0 版 Jetson 软件包使用 JetPack 6 的 CUDA 版本 PyTorch，因此只要安装了 JetPack 的 CUDA 和 cuDNN 库，Jetson 设备即符合条件。内存低于 12GB 的 Jetson 设备始终一次仅处理一张图像，并在进程内处理 （日志记录为 `GPU_SINGLE`）。
 {% endhint %}
 
-GPU 策略会运行一组工作进程，每个进程都是一个独立的操作系统进程，拥有自己的 CUDA 上下文；Chloros
-通过再次启动其已安装的后端程序来启动这些进程（而非通过 Python
-的 `multiprocessing`，因为该方式的工作进程启动在打包应用程序内部无法正常工作）。 CPU 策略使用线程池（Python
-的 `ThreadPoolExecutor`）。Chloros
-不使用任何第三方分布式框架（如 Ray）。
+GPU 策略会运行一组工作进程，每个进程都是一个独立的操作系统进程，拥有自己的 CUDA 上下文；Chloros 通过再次启动其已安装的后端程序来启动这些进程（而非通过 Python 的 `multiprocessing`，因为该方式的工作进程启动在打包应用程序内部无法正常工作）。 CPU 策略使用线程池（Python 的 `ThreadPoolExecutor`）。Chloros 不使用任何第三方分布式框架（如 Ray）。
 
 ### 管道类型
 
@@ -75,8 +65,7 @@ GPU 策略会运行一组工作进程，每个进程都是一个独立的操作�
 CHLOROS_STRATEGY=CPU_PARALLEL chloros-cli process ~/datasets/flight001
 ```
 
-该变量匹配时不区分大小写；除这三个名称以外的任何内容都将被忽略，自动检测将继续正常进行。在覆盖设置下，Chloros
-仍会为您选择工作进程数量：
+该变量匹配时不区分大小写；除这三个名称以外的任何内容都将被忽略，自动检测将继续正常进行。在覆盖设置下，Chloros 仍会为您选择工作进程数量：
 
 | 覆盖值 | 实际使用的工作进程数量 |
 | --- | --- |
@@ -126,8 +115,7 @@ CHLOROS_STRATEGY=CPU_PARALLEL chloros-cli process ~/datasets/flight001
 
 ## 动态 GPU 内存分配
 
-Chloros
-采用[4线程处理管道](processing-pipeline.md)：
+Chloros 采用[4线程处理管道](processing-pipeline.md)：
 
 * **线程1**（检测）——图像加载、EXIF解析、目标检测
 * **线程2**（校准） — 反射率校准计算
@@ -154,26 +142,23 @@ Chloros
 
 ## 纹理感知处理
 
-纹理感知去拜耳算法（**仅限 Chloros
-+** — `--debayer texture-aware`）运行一个 AI/ML 去噪模型，该模型每次复制大约需要 1.75GB 的 FP16 格式显存，因此其 GPU 内存占用远高于标准方法：
+纹理感知去拜耳算法（**仅限 Chloros+** — `--debayer texture-aware`）运行一个 AI/ML 去噪模型，该模型每次复制大约需要 1.75GB 的 FP16 格式显存，因此其 GPU 内存占用远高于标准方法：
 
 * **VRAM 低于 7GB**的系统会以**同步循环方式逐帧处理** 纹理感知——无法同时容纳多个模型副本，且工作线程池只会增加资源竞争
 * **VRAM 7GB+** 的系统可以并行处理“纹理感知”模式，但与“标准”模式相比，工作线程数量会减少
 * 在 **Jetson** 上，“Texture Aware” 始终被固定到单个工作线程
 * 如果 **没有可用的 CUDA GPU**，运行时将使用标准去拜耳算法，后端会记录一条 `[DEBAYER] … needs a CUDA GPU …` 日志行说明原因
-* 在低功耗 Jetson 设备（Nano、Orin Nano）上，当您请求使用 Texture Aware 时，CLI
-会限制 GPU 频率——请参阅 [NVIDIA Jetson 指南](../linux/nvidia-jetson-guide.md#gpu-frequency-cap-for-texture-aware-on-nano-and-orin-nano)
+* 在低功耗 Jetson 设备（Nano、Orin Nano）上，当您请求使用 Texture Aware 时，CLI 会限制 GPU 频率——请参阅 [NVIDIA Jetson 指南](../linux/nvidia-jetson-guide.md#gpu-frequency-cap-for-texture-aware-on-nano-and-orin-nano)
 
 ***
 
 ## 热管理（Jetson）
 
-Jetson 设备存在热限制，尤其是在封闭或机载部署环境中。Chloros
-会监控 Jetson 的板载温度传感器，并自动调整批处理大小：
+Jetson 设备存在热限制，尤其是在封闭或机载部署环境中。Chloros 会监控 Jetson 的板载温度传感器，并自动调整批处理大小：
 
 | 温度 | 响应 |
 | --- | --- |
-| **&lt; 70°C** | 正常运行 — 全速 |
+| **< 70°C** | 正常运行 — 全速 |
 | **70°C**（警告）| 批处理大小逐步缩减（70°C 至 80°C 之间从 100% 降至 50%）|
 | **80°C**（危急）| 激进限速（80°C 至 90°C 区间内从 50% 降至 0%）|
 | **90°C**（关机）| 完全停止 GPU 处理 |
@@ -184,11 +169,9 @@ Jetson 设备存在热限制，尤其是在封闭或机载部署环境中。Chlo
 
 ## 内存压力处理
 
-Chloros
-在处理过程中持续监控 GPU 内存，并根据三种情况采取相应措施。
+Chloros 在处理过程中持续监控 GPU 内存，并根据三种情况采取相应措施。
 
-**批处理大小调整。** 一个批处理的初始大小为 8 张图像乘以上表中的平台倍数。随后，Chloros
-会检查可用 VRAM，预留其中 20% 用于 PyTorch 自身的开销，并假设每张 12MP 的图像约占用 100MB 的 GPU 内存——批处理大小取内存限制值与平台基准值中的较小者。 批次大小绝不会低于 1。
+**批处理大小调整。** 一个批处理的初始大小为 8 张图像乘以上表中的平台倍数。随后，Chloros 会检查可用 VRAM，预留其中 20% 用于 PyTorch 自身的开销，并假设每张 12MP 的图像约占用 100MB 的 GPU 内存——批处理大小取内存限制值与平台基准值中的较小者。 批次大小绝不会低于 1。
 
 **预先缩减。**当**VRAM 利用率超过 85%** 时，会在任何任务失败之前缩减批次大小。**按线程分配的削减机制。** 随着实时利用率攀升，每个线程的 GPU 配额将相应缩减：利用率超过 80% 时缩减至 0.75 倍，超过 90% 时缩减至 0.5 倍。 监控阈值分别为 70%（保守值）、85%（正常运行限值）和 95%（内存不足风险）。**内存不足的退避与恢复。** 若仍发生内存不足事件：
 
@@ -196,8 +179,7 @@ Chloros
 * 活动线程的内存分配量将削减至当前值的70%，且分配器切换至保守策略，在连续成功分配后再次放宽限制
 * 在严重压力下，管道会从 `fused_gpu` 降级至 `tiled_gpu`，作为最后手段则降级至 `cpu_fallback`
 
-**主机内存（Jetson）。** 在处理之前，CLI
-会根据图像数量和去拜耳模式估算主机内存峰值，如果内存加上基于文件的交换空间可能不足，则会发出警告，并打印出添加交换空间的确切命令——请参阅[NVIDIA Jetson 指南](../linux/nvidia-jetson-guide.md#swap-warning-and-recommendations)。
+**主机内存（Jetson）。** 在处理之前，CLI 会根据图像数量和去拜耳模式估算主机内存峰值，如果内存加上基于文件的交换空间可能不足，则会发出警告，并打印出添加交换空间的确切命令——请参阅[NVIDIA Jetson 指南](../linux/nvidia-jetson-guide.md#swap-warning-and-recommendations)。
 
 ***
 
@@ -221,22 +203,17 @@ chloros-cli selftest
 
 ### 后端日志
 
-策略和工作线程数是在每次运行开始时由后端内部自动选择的——CLI
-界面中没有相关提示信息。当出现异常情况（如 GPU 路径回退、内存不足（OOM）或去噪器无法加载）时，相关信息会显示在该会话的后端日志中：
+策略和工作线程数是在每次运行开始时由后端内部自动选择的——CLI 界面中没有相关提示信息。当出现异常情况（如 GPU 路径回退、内存不足（OOM）或去噪器无法加载）时，相关信息会显示在该会话的后端日志中：
 
 | 平台 | 日志位置 |
 | --- | --- |
-| **Linux
-/ Jetson** | `~/.cache/chloros/logs/backend_<YYYYMMDD_HHMMSS>.log`（每次启动生成一个文件） |
-| **Linux
-，通过 CLI
-启动的后端** | 同样为 `~/.chloros/backend.log` |
+| **Linux / Jetson** | `~/.cache/chloros/logs/backend_<YYYYMMDD_HHMMSS>.log`（每次启动生成一个文件） |
+| **Linux，通过 CLI 启动的后端** | 同样为 `~/.chloros/backend.log` |
 | **Windows** | `%LOCALAPPDATA%\Chloros\logs\` |
 
 ### 实时进度
 
-运行期间，CLI
-会通过 Server-Sent Events 实时流式传输各线程的进度（检测、分析、处理、导出）——这是判断线程 3 是否为瓶颈的实用依据。参见 [处理管道](processing-pipeline.md)。
+运行期间，CLI 会通过 Server-Sent Events 实时流式传输各线程的进度（检测、分析、处理、导出）——这是判断线程 3 是否为瓶颈的实用依据。参见 [处理管道](processing-pipeline.md)。
 
 ***
 
@@ -244,8 +221,5 @@ chloros-cli selftest
 
 * [处理管道](processing-pipeline.md) — 了解 4 线程管道架构
 * [NVIDIA Jetson 指南](../linux/nvidia-jetson-guide.md) —— 针对 Jetson 的部署与优化
-* [CLI
-：命令行](../CLI.md) —— CLI
-指南
-* [CLI
-参考](../reference/cli-reference.md) —— 1.3.0 版本的完整命令列表
+* [CLI：命令行](../CLI.md) —— CLI 指南
+* [CLI 参考](../reference/cli-reference.md) —— 1.3.0 版本的完整命令列表

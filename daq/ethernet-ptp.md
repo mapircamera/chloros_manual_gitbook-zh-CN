@@ -1,8 +1,6 @@
 # DAQ-E 网络连接与时间同步
 
-> 传感器物理网络的设置——包括布线、PoE、IP 地址分配以及设备本身的网络设置——详见 **[DAQ 用户手册](https://mapir.gitbook.io/daq/daq-e/network-setup)**。 本页面主要介绍Chloros
-
-方面的内容：连接、时间同步，以及发现操作未返回结果时的处理方法。
+> 传感器物理网络的设置——包括布线、PoE、IP 地址分配以及设备本身的网络设置——详见 **[DAQ 用户手册](https://mapir.gitbook.io/daq/daq-e/network-setup)**。 本页面主要介绍Chloros 方面的内容：连接、时间同步，以及发现操作未返回结果时的处理方法。
 
 DAQ-E 是 DAQ 系列中的以太网设备：通过 PoE 供电，通过 mDNS（服务 `_daq-e._tcp`）进行发现，并可通过由其传感器 ID 派生而来的主机名进行寻址 ——例如 `daq-e-<6 hex>.local`、`daq-e-def330.local`。本页介绍该设备如何在网络上传输数据以及如何参与 PTP 时间同步。
 
@@ -13,35 +11,17 @@ DAQ-E 是 DAQ 系列中的以太网设备：通过 PoE 供电，通过 mDNS（�
 | **组播**（默认） | UDP `239.10.10.10:5002` | 同一局域网内的任意数量设备均可接收同一数据流 | 每个数据报均经过 CRC-16/CCITT 校验 |
 | **原始模式** | TCP 端口 `5000` | 仅限一个客户端（排他） | 与 DAQ-U 字节级兼容 |
 
-Chloros
-
-默认使用组播，这使得 GUI、CLI
-
-和 SDK
-
-能够同时监视同一传感器。
+Chloros 默认使用组播，这使得 GUI、CLI 和 SDK 能够同时监视同一传感器。
 
 ## 网络要求
 
-* **同一广播域。** 运行 Chloros
-
-的机器必须与传感器位于同一 L2 网络段——mDNS 发现无法穿越路由器。
-* **防火墙。** 在 Windows
-
-系统上，安装程序会在每个网络配置文件中为后端添加 **Chloros
-
-后端 (UDP-In)**防火墙规则，该规则涵盖 DAQ-E 数据（UDP 5002）、 mDNS（UDP 5353）和 PTP（UDP 319/320）；此外，还会添加一条仅限于本地子网的**“Chloros
-
-后端（TCP-In）”** 规则，用于 DAQ-E 在固件更新期间与计算机建立回连。 在Linux
-
-系统上，如果安装时该防火墙处于活动状态，`.deb`会为`ufw`或`firewalld`打开UDP端口。 第三方防火墙或后续启用的防火墙，也需要允许相同的端口。
+* **同一广播域。** 运行 Chloros 的机器必须与传感器位于同一 L2 网络段——mDNS 发现无法穿越路由器。
+* **防火墙。** 在 Windows 系统上，安装程序会在每个网络配置文件中为后端添加 **Chloros 后端 (UDP-In)**防火墙规则，该规则涵盖 DAQ-E 数据（UDP 5002）、 mDNS（UDP 5353）和 PTP（UDP 319/320）；此外，还会添加一条仅限于本地子网的**“Chloros 后端（TCP-In）”** 规则，用于 DAQ-E 在固件更新期间与计算机建立回连。 在Linux 系统上，如果安装时该防火墙处于活动状态，`.deb`会为`ufw`或`firewalld`打开UDP端口。 第三方防火墙或后续启用的防火墙，也需要允许相同的端口。
 * **PoE供电，无状态指示灯。** DAQ-E本身没有指示灯——请通过交换机或注入器端口的链路/PoE指示灯确认供电情况，并在通电后等待几秒钟，以便设备启动并加入网络。
 
 ## 连接
 
-**图形界面（GUI）：** “光传感器”选项卡 → “连接传感器” → 设备类型“DAQ-E (以太网)”。设备发现功能仅在“连接”对话框显示期间运行（Windows
-
-系统中通过mDNS浏览配合ARP扫描），每15秒重复一次；点击“刷新”按钮可立即重新扫描。 发现的传感器会显示在下拉列表中；系统会自动选中第一个检测到的传感器。
+**图形界面（GUI）：** “光传感器”选项卡 → “连接传感器” → 设备类型“DAQ-E (以太网)”。设备发现功能仅在“连接”对话框显示期间运行（Windows 系统中通过mDNS浏览配合ARP扫描），每15秒重复一次；点击“刷新”按钮可立即重新扫描。 发现的传感器会显示在下拉列表中；系统会自动选中第一个检测到的传感器。
 
 <!-- SCREENSHOT-NEEDED: DAQ connect dialog with Device Type set to "DAQ-E (Ethernet)" and at least one discovered sensor listed in the Hostname/IP dropdown (e.g. daq-e-xxxxxx.local), Connect button enabled. -->
 
@@ -67,23 +47,9 @@ chloros-cli daq pool-connect --eth-host daq-e-def330.local
 
 ## 设备设置与固件
 
-传感器本身保存着其网络设置：DHCP（出厂设置，若无 DHCP 服务器响应则回退到 169.254.x.x 的链路本地地址）或静态地址。它还保存着开机时是否开始流媒体传输的设置。 可在图形界面中进行更改（传感器齿轮图标下的设置，**网络**：**更改…**、**开机时流式传输**、**重启传感器**；参见 [DAQ 选项卡](gui.md))，或通过 CLI
+传感器本身保存着其网络设置：DHCP（出厂设置，若无 DHCP 服务器响应则回退到 169.254.x.x 的链路本地地址）或静态地址。它还保存着开机时是否开始流媒体传输的设置。 可在图形界面中进行更改（传感器齿轮图标下的设置，**网络**：**更改…**、**开机时流式传输**、**重启传感器**；参见 [DAQ 选项卡](gui.md))，或通过 CLI 和 SDK 使用 `pool-set-network`、 `pool-set-auto-stream` 和 `pool-reboot` (`DAQSensorSession.set_network()`、`set_auto_stream()`、`reboot()`；参见[CLI 参考](../reference/cli-reference.md#daq-e-device-settings))。 传感器将重启以应用网络变更，Chloros 会重新与其建立连接。静态地址必须位于运行 Chloros 的计算机所在网络中：若重启后 Chloros 无法访问该地址，则会拒绝该地址。传感器的 ID 及其 `daq-e-<id>.local` 主机名永远不会改变。 1.3.0 版本新增功能。
 
-和 SDK
-
-使用 `pool-set-network`、 `pool-set-auto-stream` 和 `pool-reboot` (`DAQSensorSession.set_network()`、`set_auto_stream()`、`reboot()`；参见[CLI
-
-参考](../reference/cli-reference.md#daq-e-device-settings))。 传感器将重启以应用网络变更，Chloros
-
-会重新与其建立连接。静态地址必须位于运行 Chloros
-
-的计算机所在网络中：若重启后 Chloros
-
-无法访问该地址，则会拒绝该地址。传感器的 ID 及其 `daq-e-<id>.local` 主机名永远不会改变。 1.3.0 版本新增功能。
-
-**固件更新功能已集成到图形用户界面中。** 当已连接的 DAQ-E 运行的固件版本早于您的 Chloros
-
-构建版本所捆绑的镜像时，其传感器行会显示一个琥珀色的 **有更新可用** 图标，且齿轮设置模态框中会提供一个“更新至<version>”按钮</version>
+**固件更新功能已集成到图形用户界面中。** 当已连接的 DAQ-E 运行的固件版本早于您的 Chloros 构建版本所捆绑的镜像时，其传感器行会显示一个琥珀色的 **有更新可用** 图标，且齿轮设置模态框中会提供一个“更新至<version>”按钮</version>
 
 。<version> 更新通过网络传输约需 30 秒；传感器将自动重启并重新连接，且若传输中断，当前固件将保持不变。 在CLI或SDK中，以及在没有图形界面的Linux系统上，请运行 `chloros-cli daq pool-update-firmware --sensor-id <id>`（`DAQSensorSession.update_firmware()`）。
 

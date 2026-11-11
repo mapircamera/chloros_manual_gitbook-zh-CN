@@ -22,19 +22,7 @@
 * **连接光传感器** — 跳转至 [光传感器选项卡](daq/) 以连接 DAQ 光传感器。无需打开项目即可使用。
 
 {% hint style="info" %}
-**仅限 Windows**：Chloros
-
-桌面图形界面（GUI）可在 Windows
-
-上使用。Linux
-
-用户应查阅 [CLI
-
-](CLI.md) 和 [Python
-
-SDK
-
-](api-python-sdk.md) 文档，了解无头处理的相关信息。
+**仅限 Windows**：Chloros 桌面图形界面（GUI）可在 Windows 上使用。Linux 用户应查阅 [CLI](CLI.md) 和 [Python SDK](api-python-sdk.md) 文档，了解无头处理的相关信息。
 {% endhint %}
 
 ### <img src=".gitbook/assets/image (2) (1) (1).png" alt="" data-size="line">
@@ -49,15 +37,9 @@ SDK
 
 
 
-在免费的 Chloros
+在免费的 Chloros 模式下，系统会依次处理所有文件，进度条将显示两个阶段：目标检测和处理。
 
-模式下，系统会依次处理所有文件，进度条将显示两个阶段：目标检测和处理。
-
-在付费的 Chloros
-
-+ 授权模式下，系统会同时处理所有文件，进度条将显示四个阶段：检测、分析、校准、导出。 将鼠标光标悬停在Chloros
-
-+进度条上，会下拉显示扩展的4个进度条面板，以便您跟踪进度。点击顶部的进度条可锁定下拉面板，再次点击则解锁。
+在付费的 Chloros+ 授权模式下，系统会同时处理所有文件，进度条将显示四个阶段：检测、分析、校准、导出。 将鼠标光标悬停在Chloros+进度条上，会下拉显示扩展的4个进度条面板，以便您跟踪进度。点击顶部的进度条可锁定下拉面板，再次点击则解锁。
 
 <figure><img src=".gitbook/assets/plus_prog.JPG" alt=""><figcaption></figcaption></figure>
 

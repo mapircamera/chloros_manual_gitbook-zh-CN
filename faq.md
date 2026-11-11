@@ -27,15 +27,9 @@ metaLinks:
 
 <summary>如果没有校准目标，我能对图像进行反射率校准吗？</summary>
 
-**Survey3
+**Survey3：** 不行。如果在拍摄非校准目标图像时未同时拍摄校准目标图像，您将无法将图像的像素值与已知的反射率百分比建立关联。 如果您也没有包含MAPIR 光传感器记录的数据，则无法测量环境光谱，反射率结果将不准确。
 
-：** 不行。如果在拍摄非校准目标图像时未同时拍摄校准目标图像，您将无法将图像的像素值与已知的反射率百分比建立关联。 如果您也没有包含MAPIR
-
-光传感器记录的数据，则无法测量环境光谱，反射率结果将不准确。
-
-**LATTICE：** 可以。反射率可以参照由DAQ光传感器（而非面板）测得的下行辐照度来确定（ρ = π·L/E）。 当帧内存在通过质量保证（QA）检测的目标时，它默认将成为绝对参考（`--reflectance-source auto`），除非该目标通过时带有标记，此时目标与DAQ链将根据测量分数进行比较。 有一个例外：“F988反射率使用场景内的反射率面板进行校准：该波段超出了DAQ光传感器的校准范围，因此Chloros
-
-会应用您最近的面板捕获数据，并在两次面板观测之间保持该值。” 参见 [校准目标](calibration-targets.md)。
+**LATTICE：** 可以。反射率可以参照由DAQ光传感器（而非面板）测得的下行辐照度来确定（ρ = π·L/E）。 当帧内存在通过质量保证（QA）检测的目标时，它默认将成为绝对参考（`--reflectance-source auto`），除非该目标通过时带有标记，此时目标与DAQ链将根据测量分数进行比较。 有一个例外：“F988反射率使用场景内的反射率面板进行校准：该波段超出了DAQ光传感器的校准范围，因此Chloros 会应用您最近的面板捕获数据，并在两次面板观测之间保持该值。” 参见 [校准目标](calibration-targets.md)。
 
 </details>
 
@@ -43,9 +37,7 @@ metaLinks:
 
 <summary>我需要 DAQ 光传感器吗？</summary>
 
-对于辐射度而言不需要：LATTICE 辐射度导出数据源自每台相机的出厂辐射校准，既不需要 DAQ 传感器，也不需要校准靶标。对于 **反射率**，您需要一个环境光的参考——可以是 DAQ 光传感器测得的下行辐射值，也可以是画面内的校准靶标。 DAQ传感器可让您**无需在场景中放置任何面板**即可生成校准后的反射率。记录的`.daq`文件会根据时间戳自动与您的图像进行匹配。 请参阅 [校准靶](calibration-targets.md) 和 [CLI
-
-参考文档](reference/cli-reference.md)。
+对于辐射度而言不需要：LATTICE 辐射度导出数据源自每台相机的出厂辐射校准，既不需要 DAQ 传感器，也不需要校准靶标。对于 **反射率**，您需要一个环境光的参考——可以是 DAQ 光传感器测得的下行辐射值，也可以是画面内的校准靶标。 DAQ传感器可让您**无需在场景中放置任何面板**即可生成校准后的反射率。记录的`.daq`文件会根据时间戳自动与您的图像进行匹配。 请参阅 [校准靶](calibration-targets.md) 和 [CLI 参考文档](reference/cli-reference.md)。
 
 </details>
 
@@ -143,9 +135,7 @@ LATTICE相机没有此限制：Chloros会实时控制其曝光（智能自动曝
 
 <summary>如果我要将图像上传到 <a href="https://www.mapir.camera/collections/software/products/mapir-cloud-subscription">MAPIR Cloud</a>，是否应该在上传前先在 Chloros 中进行处理？</summary>
 
-如果您计划将图像上传至我们的在线处理平台 [MAPIR
-
-Cloud](https://www.mapir.camera/collections/software/products/mapir-cloud-subscription)，请勿在上传前编辑图像。Cloud 平台将执行所有相同的处理步骤，甚至更多。
+如果您计划将图像上传至我们的在线处理平台 [MAPIR Cloud](https://www.mapir.camera/collections/software/products/mapir-cloud-subscription)，请勿在上传前编辑图像。Cloud 平台将执行所有相同的处理步骤，甚至更多。
 
 </details>
 
@@ -185,9 +175,7 @@ Cloud](https://www.mapir.camera/collections/software/products/mapir-cloud-subscr
 
 <summary>什么是 4 线程处理管道？</summary>
 
-Chloros
-为 Chloros
-+ 用户采用了 4 线程流水线架构： 线程 1（检测）加载图像并检测校准目标；线程 2（校准）计算反射率校准；线程 3（处理）执行 GPU 加速的去拜耳化及索引计算；线程 4（导出）写入输出文件。 多张图像可同时在不同线程中处理，以实现最大吞吐量。详情请参阅 [处理管道](processing-architecture/processing-pipeline.md)。
+Chloros 为 Chloros+ 用户采用了 4 线程流水线架构： 线程 1（检测）加载图像并检测校准目标；线程 2（校准）计算反射率校准；线程 3（处理）执行 GPU 加速的去拜耳化及索引计算；线程 4（导出）写入输出文件。 多张图像可同时在不同线程中处理，以实现最大吞吐量。详情请参阅 [处理管道](processing-architecture/processing-pipeline.md)。
 
 </details>
 
