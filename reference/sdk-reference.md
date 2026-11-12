@@ -73,7 +73,7 @@
 > - **`ArraySession.record()` 在未打开 GUI 的情况下进行记录。** 当 GUI 的组合视图关闭时，后端会自行渲染视图：数组的NDVI，或您作为`expr=`传递的索引。`RecorderHandle.stop()`会在录制失败（即未写入任何帧）时触发`ChlorosConnectError`，并将停止结果保留在`.result` 上保存停止结果（若留有 `with` 代码块则不会抛出异常：请检查 `rec.result`）。参见 [`RecorderHandle`](#recorderhandle)。
 > - **新的 `DAQSensorSession` 方法：** `enable_ptp()`、`force_disconnect()`，以及用于 DAQ-E 自身设置的 `device_info()`、`set_network()`、`set_auto_stream()`、`reboot()` 以及 `update_firmware()`。 `record_stop()` 会返回 `warning` 和 `gaps`。如果重启操作关闭了某个录制任务，则会在其响应中命名该录制任务；若重启失败，则 在 `ChlorosConnectError`（`recording_closed`；参见 [DAQ-E 设备设置](#daq-e-device-settings)）中。 参见 [`DAQSensorSession` 方法](#daqsensorsession-methods)。
 > - **停止传输的池化 DAQ-E 将由后端重新连接**，并保留其原有设置；该设备上的记录将在同一 `.daq` 中继续进行，文件中会标记出数据缺口； `record_stop()` 将间隙作为 `gaps` 返回。在 1.2.0 版本中，传感器会保持静默状态，直到被断开并重新连接，此时记录才会终止。请参阅 CLI 参考文档中的 [停止传输数据的DAQ-E](cli-reference.md#a-daq-e-that-stops-delivering)。
-> - **`open_project()`需基于已安装的SDK运行。** 安装程序（和 PyPI）现已包含所需的项目加载器；此前，`open_project()` 会触发 `ImportError` 异常，并指明 `project_cameras` / `project_sensors`。`connect_all()` 通过正在运行的后端 （光传感器通过其DAQ池）连接已保存的摄像头、数组和光传感器；而对于无法查找的已保存设备，系统会在`errors`下列出具体原因，而非不作说明地直接跳过。对于已在后端（GUI、 或`chloros-cli project connect`的）已连接并保持运行，而此前这会被报告为错误（“摄像头<sn>已存在于数组中<id>”）。参见[`ChlorosProject`方法](#chlorosproject-methods)。
+> - **`open_project()`需基于已安装的SDK运行。** 安装程序（和 PyPI）现已包含所需的项目加载器；此前，`open_project()` 会触发 `ImportError` 异常，并指明 `project_cameras` / `project_sensors`。`connect_all()` 通过正在运行的后端 （光传感器通过其DAQ池）连接已保存的摄像头、数组和光传感器；而对于无法查找的已保存设备，系统会在`errors`下列出具体原因，而非不作说明地直接跳过。对于已在后端（GUI、 或`chloros-cli project connect`的）已连接并保持运行，而此前这会被报告为错误（`Camera <sn> is already in array <id>`）。参见[`ChlorosProject`方法](#chlorosproject-methods)。
 > - **`ChlorosLocal()`、`process_folder()` 和 `process_lattice_capture()` 可在 Windows 上查找 Chloros。** 它们会查找安装程序放置后端的位置（默认是 `<install folder>\backend\`、`C:\Program Files\Chloros\backend\`， 来自安装程序自身记录的自定义文件夹），并直接连接到已运行的后端，而不会进行任何搜索。在 1.2.0 版本中，除非传入 `backend_exe=`，否则它们会在已安装的机器上报错“未找到 Chloros 后端”。
 > - **后端在启动时崩溃会立即报告。** 当 `ChlorosLocal()` 或智能连接调用启动了一个后端，而该后端在响应前就退出了， 该调用将在数秒内抛出异常：`ChlorosBackendError` 由 `ChlorosLocal` 引发，而 `ChlorosConnectError` 则由智能-connect 调用中分别抛出 `ChlorosLocal` 和 `ChlorosConnectError` 异常，并附带退出代码、后端执行的命令以及后端输出的最后几行内容。1.2.0 版本会等待 60 秒的启动超时，但不会说明原因。参见 [后端自动启动](#backend-auto-start)。
 > - **后端在脚本之间持续运行。** 退出 `with ChlorosLocal(...)` 代码块后， `process_folder()` / `process_lattice_capture()` 返回以及 `chloros-mcp` 退出，不再会停止由 SDK 启动的后端； 下一个脚本会复用该后端。它会在 `logout()` 时停止（除非 Chloros 应用处于打开状态或正在运行），在 `shutdown_backend()` 时停止，或者在后端环境中没有任何进程使用它 30 分钟后自动停止 （后端环境中的 `CHLOROS_BACKEND_IDLE_MIN` 会改变这一行为；`0`：永不）。
@@ -175,7 +175,7 @@ sudo systemctl enable --now chloros-backend@$USER.service    # $USER expands to 
 
 此时后端将以您的身份运行：它写入的捕获数据属于您，并且使用您的 `chloros-cli login`。对于已启用该功能的机器，root 的 `chloros-backend.service` 仍会安装，但 root 后端写入的每个文件都归 root 所有。 请参阅CLI参考文档中的[作为服务运行后端](cli-reference.md#running-the-backend-as-a-service-headless)。
 
-该服务运行的后端是共享的，绝不会被客户端停止：SDK脚本和`chloros-cli`会按其发现的状态使用它 （`ChlorosLocal.shutdown_backend()` 仅会停止由 `ChlorosLocal` 自身启动的后端），而 `GET /api/status` 将该单元命名为 `service`。 请使用 `sudo systemctl restart chloros-backend@$USER.service` 重新启动它。升级软件包会在安装过程中停止后端服务， 因此正在运行的脚本会失去其摄像头和传感器，随后会重新启动所有已启用的设备；卸载该软件包会停止这些服务并禁用已启用的设备。由于同一时间仅能运行一个后端，因此请仅启用一个单元：第二个单元将无法启动并保持 `failed` （退出状态 98，未重启），其 `systemctl status` 会说明原因。若要切换单元，请禁用当前未使用的那个。</id></sn>
+该服务运行的后端是共享的，绝不会被客户端停止：SDK脚本和`chloros-cli`会按其发现的状态使用它 （`ChlorosLocal.shutdown_backend()` 仅会停止由 `ChlorosLocal` 自身启动的后端），而 `GET /api/status` 将该单元命名为 `service`。 请使用 `sudo systemctl restart chloros-backend@$USER.service` 重新启动它。升级软件包会在安装过程中停止后端服务， 因此正在运行的脚本会失去其摄像头和传感器，随后会重新启动所有已启用的设备；卸载该软件包会停止这些服务并禁用已启用的设备。由于同一时间仅能运行一个后端，因此请仅启用一个单元：第二个单元将无法启动并保持 `failed` （退出状态 98，未重启），其 `systemctl status` 会说明原因。若要切换单元，请禁用当前未使用的那个。
 
 ### 步骤 2 — 安装 Python SDK
 
@@ -1484,7 +1484,7 @@ if r["clamped"]:
 
 ### 连接到已连接的数组 — `attach_array`
 
-如果数组已处于活动状态 （由GUI打开，或先前SDK会话已调用`connect_array`），请使用`attach_array`获取其句柄，而非重新连接。在此情况下，`connect_array`始终会报错“相机  <sn>已存在于数组<id>中”的错误，因为针对池中成员发送POST请求`/array/connect`不具备幂等性； `attach_array` 会读取 `/api/camera/array/list`，并通过 array_id 或序列号进行匹配。
+如果数组已处于活动状态 （由GUI打开，或先前SDK会话已调用`connect_array`），请使用`attach_array`获取其句柄，而非重新连接。在此情况下，`connect_array`始终会报错`Camera <sn> is already in array <id>`的错误，因为针对池中成员发送POST请求`/array/connect`不具备幂等性； `attach_array` 会读取 `/api/camera/array/list`，并通过 array_id 或序列号进行匹配。
 
 ```python
 import chloros_sdk
@@ -1519,7 +1519,7 @@ except chloros_sdk.ChlorosConnectError:
 > # … the array stays up for the GUI
 > ```
 >
-> 当你确实需要结束连接时——例如，为了使用另一个 `wire_ceiling_mbps` 重新连接——请调用 `arr.force_disconnect()`。如果在已连接的句柄上直接调用普通 `disconnect()` 后尝试重新连接，将会因 “相机<sn>已存在于数组中<id>”，因为资源尚未被释放。
+> 当你确实需要结束连接时——例如，为了使用另一个 `wire_ceiling_mbps` 重新连接——请调用 `arr.force_disconnect()`。如果在已连接的句柄上直接调用普通 `disconnect()` 后尝试重新连接，将会因 `Camera <sn> is already in array <id>`，因为资源尚未被释放。
 
 ### 网络分析辅助工具
 
@@ -1664,7 +1664,7 @@ daq = chloros_sdk.connect_daq_sensor(
 )
 ```
 
-`sensor_id=`指定一个传感器，且仅该传感器会被打开。系统会将其与已打开的传感器进行匹配，随后向 DAQ-E 查询其主机名或 IP 地址（对于网络扫描中仅能通过 IP 识别的 DAQ-E，系统会以只读方式查询其名称、MAC 地址和序列号， 因此通过上述任一方式均可定位该设备），以及DAQ-M的BLE MAC地址，还有DAQ-U或DAQ-M在打开后报告的ID（为验证而打开的任何其他设备都会被重新关闭）。若未找到， `connect_daq_sensor`将触发`ChlorosConnectError`，列出所发现的设备；同时还会包含一个地址（`port=` / `mac=` / `eth_host=`）中包含不同传感器时，也会触发异常。该函数绝不会退而采用任何可见的传感器——这正是零标志调用的用途。</id></sn></id></sn>
+`sensor_id=`指定一个传感器，且仅该传感器会被打开。系统会将其与已打开的传感器进行匹配，随后向 DAQ-E 查询其主机名或 IP 地址（对于网络扫描中仅能通过 IP 识别的 DAQ-E，系统会以只读方式查询其名称、MAC 地址和序列号， 因此通过上述任一方式均可定位该设备），以及DAQ-M的BLE MAC地址，还有DAQ-U或DAQ-M在打开后报告的ID（为验证而打开的任何其他设备都会被重新关闭）。若未找到， `connect_daq_sensor`将触发`ChlorosConnectError`，列出所发现的设备；同时还会包含一个地址（`port=` / `mac=` / `eth_host=`）中包含不同传感器时，也会触发异常。该函数绝不会退而采用任何可见的传感器——这正是零标志调用的用途。
 
 ### `connect_daq_sensor()` 签名
 
