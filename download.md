@@ -193,7 +193,9 @@ pip install chloros-sdk
 * **🐻 先进的纹理感知去拜耳算法** - 一种高质量的边缘感知去拜耳算法，结合 AI/ML 降噪模型，可消除几乎所有的去拜耳噪声。
 * 🧮 **自定义公式** - 创建自定义多光谱指数
 
-<p align="center"><a href="https://cloud.mapir.camera/pricing" class="button primary">查看 Chloros+ 套餐与定价</a></p>***
+<p align="center"><a href="https://cloud.mapir.camera/pricing" class="button primary">查看 Chloros+ 套餐与定价</a></p>
+
+***
 
 ## 安装帮助
 
@@ -234,7 +236,9 @@ pip install chloros-sdk
 * 📧 **电子邮件**：info@mapir.camera
 * 🌐 **网站**：[https://www.mapir.camera/community/contact](https://www.mapir.camera/community/contact)
 * 📚 **文档**：[入门指南](./)
-* ❓ **常见问题**：[常见问题解答](faq.md)***
+* ❓ **常见问题**：[常见问题解答](faq.md)
+
+***
 
 ## 软件更新
 

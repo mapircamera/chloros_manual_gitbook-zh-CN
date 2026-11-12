@@ -103,9 +103,7 @@ CHLOROS_STRATEGY=CPU_PARALLEL chloros-cli process ~/datasets/flight001
 | --- | --- | --- |
 | **8GB+** | 90% | ×2.0 |
 | **6-8GB** | 85% | ×1.75 |
-| **
-
-3.5-6GB** | 80% | ×1.5 |
+| **3.5-6GB** | 80% | ×1.5 |
 | **2-3.5GB** | 75% | ×1.25 |
 | **低于 2GB** | 70% | ×1.0 |
 

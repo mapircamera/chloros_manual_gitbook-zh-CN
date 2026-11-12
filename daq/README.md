@@ -17,7 +17,9 @@ MAPIR 的 **DAQ** 光传感器将环境光测量为经辐射校准的光谱。�
 | --- | --- | --- |
 | **DAQ-U** | USB（串行） | 串行端口扫描 |
 | **DAQ-M** | 蓝牙低功耗 | 按名称进行 BLE 扫描 |
-| **DAQ-E** | 以太网（IPv4，PoE供电） | mDNS `_daq-e._tcp`（主机名 `daq-e-<id>.local`） |**DAQ-E-S（1.3.0 版本新增）。** 一款配备固定式漫射器和倾斜传感器的 DAQ-E。Chloros 将其列为 `DAQ-E-S`，其运行方式与 DAQ-E 完全相同，唯一区别在于它不进行帽角校正，且每次读数都会包含设备的倾斜、横滚和俯仰角度。 参见 [DAQ-E-S：固定扩散板和倾斜](caps-and-range.md#daq-e-s-fixed-diffuser-and-tilt)。
+| **DAQ-E** | 以太网（IPv4，PoE供电） | mDNS `_daq-e._tcp`（主机名 `daq-e-<id>.local`） |
+
+**DAQ-E-S（1.3.0 版本新增）。** 一款配备固定式漫射器和倾斜传感器的 DAQ-E。Chloros 将其列为 `DAQ-E-S`，其运行方式与 DAQ-E 完全相同，唯一区别在于它不进行帽角校正，且每次读数都会包含设备的倾斜、横滚和俯仰角度。 参见 [DAQ-E-S：固定扩散板和倾斜](caps-and-range.md#daq-e-s-fixed-diffuser-and-tilt)。
 
 这三款设备均采用相同的通信协议，并提供完全一致的数据：
 
